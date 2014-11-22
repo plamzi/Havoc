@@ -7,16 +7,22 @@ Havoc is an open source multiplayer RPG game engine in node.js especially suited
 
 Screenshots:
 http://www.cloudgamer.org/images/Havoc1.png
+
 http://www.cloudgamer.org/images/Havoc2.png
+
 http://www.cloudgamer.org/images/Havoc3.png
+
 
 Live Demos:
 
 http://www.cloudgamer.org/play?host=aaralon.com&havoc=1
+
 (mostly text, very close to what you will get out-of-the-box)
 
+
 http://www.aaralon.com 
-(graphics, requires a Facebook account or existing user at this time)
+
+(graphics, requires a Facebook account or existing user at this time, in progress so not fully playable yet)
 
 
 Features include:
@@ -52,10 +58,6 @@ git clone https://github.com/plamzi/Havoc
 
 * Modify config.js to include your SQL server credentials. If you are not using MySQL for storage (recommended), you will need to modify the dialect and port settings as well. For example:
 
-config = { 
-
-...
-
     db: {
         user:			"DB_USER",
         password:		"DB_USER_PASSWORD",
@@ -65,23 +67,18 @@ config = {
         port:			3306
     }
 
-...
-
 * Import the included SQL schema with sample content (highly recommended). If you don't import the SQL schema, an empty one will be created by the ORM on first run. However, you may need to perform some additional tweaks, and you will be missing out on a lot of examples. Only start with a clean schema if you intend to immediately strike out on your own in a different direction.
 
 * * Optionally, near the top of config.js, modify the ports on which the simple socket and websocket servers for the game should run.
-
-config = { 
 
 	server: {
 		port:		6000, 		/* raw socket server port */
 		wsport:		6001, 		/* websocket server port */
 		dev:		true, 		/* flag for dev environment */
-		dynamic:	true, 		/* allow dynamic loading of scripts when they are modified. otherwise, you can still use reload command */
+		dynamic:	true, 		/* allow dynamic loading of scripts when modified */
 		language:	'eng', 		/* default language / strings file */
 		log: 		'./syslog' 	/* path to the syslog */
-	},
-...
+	}
 	
 * * Optionally, install Node Package Manager to be able to update 3rd party scripts ahead of time:
 
