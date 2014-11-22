@@ -1,0 +1,12 @@
+border_size=1
+usage=map
+
+Xol         , Xol         , Urb^Bz      , Urb         , Urb         , Urb         , Urb^Xo      , Urb         , Urb^Xo      , Urb         , Urb         , Urb         , Urb^Bz      , Xol         , Xol         
+Urb         , Urb         , Urb^Mtr     , Urb         , Urb         , Urb         , Urb^Xo      , Kud         , Urb^Xo      , Urb         , Urb         , Urb         , Urb         , Urb         , Urb         
+Urb         , Urb         , Urb^Mtr     , Urb^Mtr     , Urb         , Urb         , Urb         , Urb^Bw|     , Urb         , Urb         , Urb         , Urb^Tab     , Urb^Tab     , Urb         , Urb         
+Rr          , Urb         , Urb^Mtr     , Urb^Mtr     , Urb         , Urb         , Urb         , Urb         , Urb         , Urb         , Urb         , Urb         , Urb         , Urb         , Rr          
+Rr          , Rr          , Rr          , Urb^Mtr     , Urb         , Urb         , Urb         , Urb^Ze      , Urb         , Urb^Log     , Urb         , Urb         , Uu^Flr      , Rr          , Rr          
+Rr          , Rr          , Rr^Izb/     , Rr          , Rr          , Urb         , Urb         , Urb         , Urb         , Urb         , Uu^Armr     , Rr^Wra      , Rr          , Rr          , Rr          
+Rr          , Rr^Izb/     , Rr^Izt/     , Rr^Izt/     , Rr^Izx/     , Rr          , Rr          , Urb         , Rr          , Rr          , Rr          , Rr          , Rr          , Uu^Vud      , Rr          
+Xol         , Rr          , Rr^Bz       , Rr^Izx/     , Rr          , Rr          , Rr          , Urb         , Rr          , Rr          , Rr          , Rr          , Rr^Bz       , Rr          , Xol         
+Xol         , Xol         , Xol         , Xol         , Xol         , Rr          , Rr          , Urb^Sct     , Rr          , Rr          , Xol         , Xol         , Xol         , Xol         , Xol         

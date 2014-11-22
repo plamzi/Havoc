@@ -1,0 +1,15 @@
+{
+    "mysql": {
+        "database": "AARALON",
+        "user": "aaralon",
+        "password": "uha8Hoo8*"
+    },
+    "server": {
+        "port": 3000
+    },
+    "app": {
+        "layouts": true,
+        "themes": true,
+        "languages": true
+    }
+}

@@ -1,0 +1,17 @@
+border_size=1
+usage=map
+
+Xow         , Xow         , Xow         , Xow         , Xow         , Xow         , Xow         , Xow         , Xow         , Xow         , Iwr         , Iwr         , StrC        , Iwr         
+Xow         , Xow         , Xow         , Xow         , Iwr^Bzu     , Iwr^Bls     , Iwr^Bz      , Xow         , Iwr         , Iwr^Bzu     , Iwr         , Iwr^Bz      , Iwr^Bz      , Iwr         
+Xow         , Xow         , Xow         , Xow         , Xow         , Iwr^Efm     , Iwr^Bls     , Iwr         , Iwr         , Iwr         , Iwr         , Iwr         , Iwr         , Iwr         
+Xow         , Xow         , Xow         , Xow         , Iwr^Bz      , Iwr         , Iwr         , Iwr         , Iwr         , Iwr         , Iwr         , Iwr         , Iwr         , Iwr         
+Xow         , Xow         , Iwr^Bzu     , Iwr         , Iwr         , Iwr         , Iwr         , Iwr         , Iwr         , Iwr         , Iwr         , Iwr         , Iwr         , Iwr         
+Xow         , Iwr         , Iwr         , Iwr         , Iwr         , Iwr^Can\    , Iwr         , Iwr         , Iwr         , Iwr         , Iwr         , Iwr         , Iwr         , Iwr         
+Iwr         , Iwr         , Iwr         , Iwr         , Iwr         , Iwr         , Iwr         , Iwr         , Xow         , Iwr         , Iwr         , Iwr         , Iwr         , Iwr         
+Iwr         , Iwr^Sct     , Iwr         , Iwr         , Iwr         , Iwr         , Iwr^Bzu     , Xow         , Xow         , Xow         , Iwr         , Iwr         , Iwr         , Iwr         
+Xow         , Iwr         , Iwr         , Iwr         , Iwr^Bz      , Iwr         , Xow         , Xow         , Iwr^Bzu     , Iwr         , Iwr         , Iwr         , Iwr         , Iwr         
+Xow         , Xow         , Xow         , Iwr         , Xow         , Xow         , Iwr^Bzu     , Iwr         , Iwr         , Iwr         , Iwr         , Iwr         , Iwr         , Iwr         
+Xow         , Xow         , Xow         , Xow         , Xow         , Iwr         , Iwr         , Iwr         , Iwr         , Iwr         , Iwr         , Iwr         , Iwr^Bz      , Iwr         
+Xow         , Xow         , Iwr^Bz      , Xow         , Xow         , Xow         , Xow         , Iwr^Bz      , Qxu^Dr      , Iwr         , Iwr^Bzu     , Iwr         , Xow         , Iwr         
+Xow         , Iwr^Fxr     , Iwr^Bz      , Iwr^Sc      , Xow         , Xow         , Xow         , Xow         , Xow         , Iwr         , Xow         , Xow         , Xow         , Xow         
+Xow         , Xow         , Xow         , Xow         , Xow         , Xow         , Xow         , Xow         , Xow         , Xow         , Xow         , Xow         , Xow         , Xow         

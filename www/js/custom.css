@@ -1,0 +1,15 @@
+body {
+    font-size: 11px;
+}
+
+.col-md-3 {
+    width: 12%;
+}
+
+.col-md-9 {
+    width: 88%;
+}
+
+.ace_content {
+    font-size: 12px;
+}

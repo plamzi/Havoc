@@ -1,0 +1,27 @@
+{
+	"ace-editor": {
+		"public": {
+			"external": {
+				"js": [
+
+				]
+			},
+			"local": {
+
+				"path": "/PATH/TO/havoc/www/js",
+
+				"js": [
+					"/ace.js",
+					"/mode-javascript.js",
+					"/mode-json.js",
+					"/theme-twilight.js",
+					"/ace-init.js"
+				],
+
+				"css": [
+					"/custom.css"
+				]
+			}
+		}
+	}
+}
