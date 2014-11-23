@@ -85,15 +85,17 @@ git clone https://github.com/plamzi/Havoc
 
 https://github.com/npm/npm
 
-* On recent Linux distros you can set up an Upstart script by modifying the included havoc.conf and copying it to /etc/init/havoc.conf.
-
+* On recent Linux distros you can set up an Upstart script by modifying the included havoc.conf and copying it to /etc/init/havoc.conf. To run manually:
+```
+node ./havoc.js
+```
 * To set up in-browser content creation:
 ```
 npm install express-admin
 ```
-- edit ./dbadmin/custom.json to point to the /www folder of your havoc directory
+- edit ./dbadmin/custom.json to point to the /www folder of your havoc directory (this enables Ace code editor for fields you define as containing JS or JSON)
 
-- run ./dbadmin.sh and create your admin user as prompted
+- run ./dbadmin.sh and create your db admin user as prompted
 
 - maintain the files under ./dbadmin as per the express-admin documentation available here:
 
@@ -106,7 +108,6 @@ npm install codebox
 - configure and run ./codebox.sh as per:
 
 https://github.com/CodeboxIDE/codebox
-
 
 * To set up for map creation, note that the built-in world component can read maps created by the Battle for Wesnoth map editor, which can be downloaded here:
 
@@ -124,14 +125,14 @@ That said, if you'd like to run your own web client, you can start by grabbing t
 git clone https://github.com/plamzi/MUDPortal-Web-App
 ```
 
-Once you install Havoc, you should immediately be able to access and play your game server on a tailored web GUI at the following URL:
+Once you install Havoc, and have it up and running, verify that your websocket port is open to the outside. Then you should be able to access and play your game server at the following URL:
 
 http://www.cloudgamer.org/play?host=your-host-name&port=your-websocket-port&havoc=1
 
 The port parameter is optional if your websocket server is listening on the default port of 6001.
 
 
-By default, the cloud app will load the graphical overhead map and will look for your world map images at:
+By default, the cloud-based web app will load the graphical overhead map and will look for your world map images at:
 
 http://your-host-name/world/map-name.jpg
 
