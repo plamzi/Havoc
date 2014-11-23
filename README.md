@@ -5,7 +5,8 @@ v0.3 :: Alpha :: Unstable
 Havoc is an open source multiplayer RPG game engine in node.js especially suited for realtime social web-based multiplayer games with a lot of interactive rich text. It does not include a physics or particle engine--it comes bundled with a hexagonal world map in which any number of entities can occupy the same hex (maps are linked via portals).
 
 
-Screenshots:
+<b>Screenshots:</b>
+
 http://www.cloudgamer.org/images/Havoc1.png
 
 http://www.cloudgamer.org/images/Havoc2.png
@@ -13,7 +14,7 @@ http://www.cloudgamer.org/images/Havoc2.png
 http://www.cloudgamer.org/images/Havoc3.png
 
 
-Live Demos:
+<b>Live Demos:</b>
 
 http://www.cloudgamer.org/play?host=aaralon.com&havoc=1
 
@@ -25,7 +26,7 @@ http://www.aaralon.com
 (graphics, requires a Facebook account or existing user at this time, in progress so not fully playable yet)
 
 
-Features include:
+<b>Features include:</b>
 
 * Modular design that can be extended with components and plugins.
 
@@ -46,7 +47,7 @@ Features include:
 * Pairs with a highly responsive websocket client that can be used and customized in the cloud, or hosted locally.
 
 
-Installation Notes:
+<h2>Installation Notes:</h2>
 
 * Install node.js: 
 
@@ -57,7 +58,7 @@ https://github.com/joyent/node
 git clone https://github.com/plamzi/Havoc
 
 * Modify config.js to include your SQL server credentials. If you are not using MySQL for storage (recommended), you will need to modify the dialect and port settings as well. For example:
-
+```json
     db: {
         user:			"DB_USER",
         password:		"DB_USER_PASSWORD",
@@ -66,11 +67,11 @@ git clone https://github.com/plamzi/Havoc
         host:			"localhost",
         port:			3306
     }
-
+```
 * Import the included SQL schema with sample content (highly recommended). If you don't import the SQL schema, an empty one will be created by the ORM on first run. However, you may need to perform some additional tweaks, and you will be missing out on a lot of examples. Only start with a clean schema if you intend to immediately strike out on your own in a different direction.
 
 * * Optionally, near the top of config.js, modify the ports on which the simple socket and websocket servers for the game should run.
-
+```json
 	server: {
 		port:		6000, 		/* raw socket server port */
 		wsport:		6001, 		/* websocket server port */
@@ -79,7 +80,7 @@ git clone https://github.com/plamzi/Havoc
 		language:	'eng', 		/* default language / strings file */
 		log: 		'./syslog' 	/* path to the syslog */
 	}
-	
+```
 * * Optionally, install Node Package Manager to be able to update 3rd party scripts ahead of time:
 
 https://github.com/npm/npm
@@ -98,7 +99,7 @@ https://github.com/npm/npm
 
 http://simov.github.io/express-admin-site/
 
-** To set up in-browser coding:
+* * To set up in-browser coding:
 
 - npm install codebox
 
@@ -107,7 +108,12 @@ http://simov.github.io/express-admin-site/
 https://github.com/CodeboxIDE/codebox
 
 
-Client Notes:
+* * The built-in world component can read maps created by the Battle for Wesnoth map editor, which can be downloaded here:
+
+http://www.wesnoth.org/
+
+
+<h2>Client Notes:</h2>
 
 Although Havoc can be easily adapted to drive any client, it is specifically designed to work out of the box with the web app at http://www.cloudgamer.org/. 
 
@@ -134,7 +140,7 @@ To disable the graphical map, add &map=0 to the URL parameters:
 http://www.cloudgamer.org/play?host=your-host-name&port=your-websocket-port&havoc=1&map=0
 
 
-License Notes:
+<h2>License Notes:</h2>
 
 Havoc is made available under the GPLv2 license. The gist of it is that you are free to use and modify the software, including in commercial projects, but you are not permitted to derive work from it (or make it part of a larger work) and license that work differently. Also, you are not allowed to patent derivative work.
 
