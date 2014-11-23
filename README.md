@@ -147,7 +147,7 @@ Havoc is made available under the GPLv2 license. The gist of it is that you are 
 Because Havoc is modular, it is possible to develop and publish commercial components and plugins for it, as well as closed-source extensions whose code is yours to license as you see fit. However, if you modify the extensions that come with Havoc, the rules above apply and you have to make those modifications available under GPLv2.
 
 The license applies to all files with a header specifying that they are part of Havoc. It covers all files and folder trees listed below (subject to additions and changes):
-
+```
 havoc.js
 havoc.sql.zip
 config.js
@@ -158,7 +158,7 @@ plugins/
 quests/
 world/
 www/
-
+```
 
 <h2>Contributing to Havoc:</h2>
 
