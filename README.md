@@ -160,8 +160,8 @@ world/
 www/
 
 
-Contributing to Havoc:
+<h2>Contributing to Havoc:</h2>
 
-All GitHub pull requests will be considered. In the early days, priority will be given to stability-related changes. 
+All GitHub pull requests will be considered. In the early days, priority will be given to any stability-related changes. 
 
-In addition, you can reach the author via the Havoc forum at http://www.cloudgamer.org/forums. This is also the place where you can discuss any topics that are outside the scope of the GitHub Issues page.
+In addition, you can engage the author via the Havoc forum at http://www.cloudgamer.org/forums. This is also the place where you can discuss any topics that are outside the scope of the GitHub Issues page.
