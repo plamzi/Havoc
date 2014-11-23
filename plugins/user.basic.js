@@ -1,3 +1,5 @@
+/* Havoc (c) 2014 */
+
 /* basic user instance methods merged into the s.user object, which is also made accessible under ch.user */
 
 var u = require('util');
@@ -50,7 +52,7 @@ module.exports = {
 				s.email = d.email;
 				s.fb = d;
 				
-				user.usercheck(s, function(r) {
+				user.userCheck(s, function(r) {
 					if (r)
 						user.password(s, s.password);
 					else

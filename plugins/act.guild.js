@@ -398,15 +398,18 @@ module.exports = {
 			for (var i in r) {
 				
 				var user = m.userindex[r[i].UserId]; /* the user index already sets the user display name */
-				var o = [ 'pm ' + user.name ];
+				var o = [ 'pm ' + user.id, 'whois ' + user.id ];
+				var hint = [ 'pm ' + user.name, 'whois ' + user.name ];
 				
-				if (ch.isGuildLeader())
-					o.push('guild dismiss ' + user.name);
+				if (ch.isGuildLeader() && user.id != ch.user.id) {
+					o.push('guild dismiss ' + user.id);
+					hint.push('guild dismiss ' + user.name);
+				}
 				
 				members +=
 				r[i].updatedAt.toUTCString().substring(0, 11).replace(',','').style(11, '&Ki') + ' '
-				+ m.U_PAWN.style(16, '&178') + ' ' + user.name.mxpselect(o) + ' '
-				+ m.U_PAWN.style(16, '&B') + ' ' + r[i].name.mxpsend('whois ' + r[i].name, r[i].class + ', ' + r[i].trade) + ' '
+				+ m.U_HUMAN.style(16, '&178') + ' ' + user.name.mxpselect(o, hint) + ' '
+				+ m.U_GROUP.style(16, '&B') + ' ' + r[i].name.mxpsend('pm ' + user.id, 'pm ' + r[i].name) + ' '
 				+ m.U_STAR.style('guild') + ' ' + ch.getGuildRank(user) 
 				+ '\r\n';
 			}

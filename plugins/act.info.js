@@ -493,6 +493,27 @@ module.exports = {
 		});
 	},
 
+	whois: function(arg) {
+		
+		var ch = this, m = my();
+
+		if (!arg)
+			return;
+			
+		var usr = m.userindex[arg[0]];
+		
+		if (!usr)
+			return;
+		
+		var whois = m.U_HUMAN.style(16, '&178') + ' ' + usr.name.mxpsend('pm ' + usr.id, 'pm ' + usr.name) + ' ' +
+		+ m.U_SWORDS.style(15, '&R') + ' ' + usr.points.frags + ' '
+		+ m.U_KARMA.style(15, '&M') + ' ' + usr.points.karma + ' '
+		+ usr.updatedAt.toUTCString().substring(0, 11).replace(',' , '').style(11, '&Ki') + ' '
+		+ '\r\n';
+		
+		ch.send(whois);
+	},
+	
 	test: function(arg) {
 		
 		var ch = this;

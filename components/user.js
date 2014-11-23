@@ -20,11 +20,21 @@ var transporter = mailer.createTransport(sendmailTransport());
 addStrings({
 	eng: {
 		
-		USERNAME:			("Enter " + "reset".mxpsend() + " to request a password reset email.\r\nEnter " + "token".mxpsend() + " if you already have one.").style(11, "&Ki") + "\r\nEnter new or existing username: ",
+		USERNAME:			("Press " + "reset".mxpsend() + " to request a password reset email.\r\nPress " + "token".mxpsend() + " if you already have one.").style(11, "&Ki") + "\r\nEnter new or existing username: ",
 		PASSWORD:			"Password: ",
 		AUTH_FAIL:			"Invalid password. Try again: ",
 		INVALID_PASSWORD:	"Invalid password (must be at least 6 characters). Try again: ",
 		INVALID_NAME:		"Invalid name. Try another.",
+
+		RESET_PROMPT_EMAIL:	"\r\nEnter the email address associated with your account: ",
+		RESET_PROMPT_TOKEN:	"\r\nEnter the token you received in an email: ",
+		RESET_EMAIL_SENT:	"\r\nIf we have this email on record, a reset token has been sent.",
+		RESET_EMAIL_SUBJECT:"Your password reset token",
+		RESET_EMAIL_BODY:	"Hello,\r\n\r\nA password reset token was requested for " + config.game.name + " username '%s'.\r\nThe reset token is: %s\r\n\r\nPress 'token' at the login prompt and enter it to complete your password reset.\r\n\r\nYours sincerely,\r\nVeda",
+		TOKEN_INVALID:		"The token you entered was invalid. Please try again.",
+		CHANGE_PASSWORD:	"Enter a new password (or " + "cancel".mxpsend('') + "): ",
+		YOU_CHANGED_PASSWORD: "You changed your password successfully",
+		
 		USER_AVAILABLE:		"Username available. Would you like to create the account '%s'?",
 		USER_EXISTS:		"Username exists. Enter password, or " + "try another name".mxpsend('') + ".\r\nPassword: ",
 		PASS_GET:			"Give me a password for this user: ",
@@ -69,7 +79,6 @@ module.exports = {
 	init: function(re) {
 		
 		debug('user.init');
-
 		server.register('user', 'request', user.welcome);
 
 		server.register('user', 'end', function(s) {
@@ -207,12 +216,28 @@ module.exports = {
 		
 		if (s.username.toLowerCase() == 'reset') {
 			s.snd(my().RESET_PROMPT_EMAIL);
+			if (s.portal)
+				s.sendGMCP('ModalInput', {
+					title: 'Password Reset Request',
+					placeholder: 'email address linked to your account',
+					tag: 'input',
+					type: 'email',
+					abort: '/n'
+				});
 			s.next = user.resetRequest;
 			return;
 		}
-		
+
 		if (s.username.toLowerCase() == 'token') {
 			s.snd(my().RESET_PROMPT_TOKEN);
+			if (s.portal)
+				s.sendGMCP('ModalInput', {
+					title: 'Enter Reset Token',
+					placeholder: 'enter the token we emailed you',
+					tag: 'input',
+					type: 'text',
+					abort: '/n'
+				});
 			s.next = user.resetConfirm;
 			return;
 		}
@@ -277,14 +302,14 @@ module.exports = {
 	
 	resetConfirm: function(s, d) {
 		
-		if (!d || d > 255) {
+		if (!d) {
 			s.next = user.userName;
 			s.snd(my().USERNAME);
 			return;
 		}
 		
 		User.find({
-			where: [ 'MD5(password)', d ]
+			where: [ 'MD5(password) = "' + d + '"' ]
 		})
 		.then(function(r) {
 			
@@ -292,21 +317,36 @@ module.exports = {
 				s.username = r.name;
 				s.next = user.passGet;
 				s.snd(u.format(my().PASS_GET_FOR_X, s.username));
+				if (s.portal)
+					s.sendGMCP('ModalInput', {
+						title: 'Enter New Password',
+						placeholder: 'enter a new password (5 char min.)',
+						tag: 'input',
+						type: 'password',
+						attr: 'reset',
+						abort: '/n'
+					});
 			}
 			else {
-				s.send(my().TOKEN_INVALID);
 				s.next = user.userName;
-				s.snd(my().USERNAME);
+				s.snd(my().TOKEN_INVALID + '\r\n' + my().USERNAME);
+				if (s.portal)
+					s.sendGMCP('Modal', {
+						title: 'Invalid Token',
+						text: my().TOKEN_INVALID,
+					});
 			}
 		});
 	},
 	
 	usernameConfirm: function(s, d) {
+		
 		if (!d || d.cap()[0] != 'Y') {
 			s.next = user.userName;
 			s.snd(my().USERNAME);
 			return;
 		}
+		
 		s.next = user.email;
 		s.snd(my().PROMPT_EMAIL);
 	},
@@ -324,10 +364,18 @@ module.exports = {
 	},
 
 	passGet: function(s, d) {
-		if (!d || !user.validPass(d)) {
+		
+		if (!d) {
+			s.next = user.userName;
+			s.snd(my().USERNAME);
+			return;
+		}
+		
+		if (!user.validPass(d)) {
 			s.snd(my().INVALID_PASSWORD);
 			return;
 		}
+		
 		s.password = d;
 		s.next = user.passConfirm;
 		s.snd(my().PASS_CONFIRM);
@@ -335,6 +383,12 @@ module.exports = {
 
 	passConfirm: function (s, d) {
 
+		if (!d) {
+			s.next = user.userName;
+			s.snd(my().USERNAME);
+			return;
+		}
+		
 		if (!s.username) {
 			log('register error');
 			server.closeSocket(s);
@@ -355,6 +409,12 @@ module.exports = {
 	password: function (s, d) {
 		
 		debug('user.password', s);
+		
+		if (!d) {
+			s.next = user.userName;
+			s.snd(my().USERNAME);
+			return;
+		}
 		
 		if (!s.attempts)
 			s.attempts = 0;
