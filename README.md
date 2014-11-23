@@ -49,16 +49,16 @@ http://www.aaralon.com
 
 <h2>Installation Notes:</h2>
 
-* Install node.js: 
+* Install node.js from: 
 
 https://github.com/joyent/node
 
 * Clone or download this repository:
-
+```
 git clone https://github.com/plamzi/Havoc
-
+```
 * Modify config.js to include your SQL server credentials. If you are not using MySQL for storage (recommended), you will need to modify the dialect and port settings as well. For example:
-```json
+```
     db: {
         user:			"DB_USER",
         password:		"DB_USER_PASSWORD",
@@ -70,8 +70,8 @@ git clone https://github.com/plamzi/Havoc
 ```
 * Import the included SQL schema with sample content (highly recommended). If you don't import the SQL schema, an empty one will be created by the ORM on first run. However, you may need to perform some additional tweaks, and you will be missing out on a lot of examples. Only start with a clean schema if you intend to immediately strike out on your own in a different direction.
 
-* * Optionally, near the top of config.js, modify the ports on which the simple socket and websocket servers for the game should run.
-```json
+* Optionally, near the top of config.js, modify the ports on which the simple socket and websocket servers for the game should run.
+```
 	server: {
 		port:		6000, 		/* raw socket server port */
 		wsport:		6001, 		/* websocket server port */
@@ -81,34 +81,34 @@ git clone https://github.com/plamzi/Havoc
 		log: 		'./syslog' 	/* path to the syslog */
 	}
 ```
-* * Optionally, install Node Package Manager to be able to update 3rd party scripts ahead of time:
+* Optionally, install Node Package Manager if you want to update 3rd party modules ahead of time (no guarantees that the updates will just work):
 
 https://github.com/npm/npm
 
-* * On recent Linux distros you can set up an Upstart script by modifying the included havoc.conf and copying it to /etc/init/havoc.conf.
+* On recent Linux distros you can set up an Upstart script by modifying the included havoc.conf and copying it to /etc/init/havoc.conf.
 
-* * To set up in-browser content creation:
-
-- npm install express-admin
-
+* To set up in-browser content creation:
+```
+npm install express-admin
+```
 - edit ./dbadmin/custom.json to point to the /www folder of your havoc directory
 
 - run ./dbadmin.sh and create your admin user as prompted
 
-- maintain the files under ./dbadmin as per the express-admin documentation:
+- maintain the files under ./dbadmin as per the express-admin documentation available here:
 
 http://simov.github.io/express-admin-site/
 
-* * To set up in-browser coding:
-
-- npm install codebox
-
+* To set up in-browser coding:
+```
+npm install codebox
+```
 - configure and run ./codebox.sh as per:
 
 https://github.com/CodeboxIDE/codebox
 
 
-* * The built-in world component can read maps created by the Battle for Wesnoth map editor, which can be downloaded here:
+* To set up for map creation, note that the built-in world component can read maps created by the Battle for Wesnoth map editor, which can be downloaded here:
 
 http://www.wesnoth.org/
 
@@ -120,9 +120,9 @@ Although Havoc can be easily adapted to drive any client, it is specifically des
 The cloud app allows for deep customizations (and collaborations) via online tools after free site registration. Customizing the cloud app gives you the advantage of receiving automatic improvements without the need to host and maintain your own client.
 
 That said, if you'd like to run your own web client, you can start by grabbing the web app source code. which is available here: 
-
-https://github.com/plamzi/MUDPortal-Web-App
-
+```
+git clone https://github.com/plamzi/MUDPortal-Web-App
+```
 
 Once you install Havoc, you should immediately be able to access and play your game server on a tailored web GUI at the following URL:
 
