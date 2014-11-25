@@ -49,7 +49,7 @@ var onStat = function(ch, vict) {
 	var m = my(), exp = m.exp;
 	var tnl = (vict.points.exp - exp[vict.level]) / (exp[vict.level + 1] - exp[vict.level]);
 	tnl = Math.round(tnl * 100);
-	tnl = isNaN(tnl)?0:tnl;
+	tnl = isNaN(tnl) ? 0 : tnl;
 	
 	var bar = function(tnl) {
 		var bar = [];
@@ -110,7 +110,7 @@ module.exports = {
 				/* we'll keep the resulting array in my() so we can reload the rest of the code */
 				my().classes = r;
 				char.emit('classes.loaded');
-				log('char.class loaded classes: ' + my().classes.length);
+				info('char.class loaded classes: ' + my().classes.length);
 			});	
 		});
 	},

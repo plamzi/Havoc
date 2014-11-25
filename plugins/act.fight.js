@@ -4,6 +4,7 @@ addStrings({
 	
 	eng: {
 		ATTACKS_USAGE:		"Usage: attacks (no arguments)",
+		YOUR_ATTACKS:		"Your Attacks:",
 		KILL_USAGE:			"Usage: kill target",
 		PEACE_USAGE:		"Usage: peace (no arguments) " + "\u262E".font('size=20')
 	}
@@ -12,8 +13,10 @@ addStrings({
 module.exports = {
 
 	requires: function(ch) {
+		
 		if (ch.immo() && !ch.imp())
 			return 0;
+		
 		return 1;
 	},
 	
@@ -64,9 +67,8 @@ module.exports = {
 	attacks: function() {
 		
 		var ch = this;
-		var att = ch.getAttack(), skl = ch.getSkill(), def = ch.getDefense();
 		
-		//ch.send(my().YOUR_ATTACKS);
+		var att = ch.getAttack(), skl = ch.getSkill(), def = ch.getDefense();
 		
 		var msg = ch.attacks.map(function(a) {
 			
@@ -95,7 +97,7 @@ module.exports = {
 			
 		}).join('\r\n');
 		
-		ch.snd('<FRAME Name="attacks" Parent="ChatterBox">'.mxp());
-		ch.snd(msg.mxpdest('attacks'));
+		//ch.snd('<FRAME Name="attacks" Parent="ChatterBox">'.mxp());
+		ch.snd((my().YOUR_ATTACKS + '\r\n' + msg).mxpdest('Modal'));
 	}
 };

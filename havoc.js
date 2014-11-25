@@ -135,11 +135,11 @@ havoc = {
 	loadPlugin: function(a) {
 		
 		var f = './plugins/' + a + '.js';
-		var bits = a.split('.'), comp = bits[0], plugin = bits[1];
+		var bits = a.split('.'), component = bits[0], plugin = bits[1];
 		    
-		if (global[comp]) { /* we let components decide what happens when a plugin of theirs is modified */
+		if (global[component]) { /* we let components decide what happens when a plugin of theirs is modified */
 			log('detected plugin change: ' + a.color('&155'));
-			havoc.emit('plugin.change', global[comp], f);
+			havoc.emit('plugin.change', global[component], f);
 		}
 		else
 			log('detected plugin change but no valid parent component: ' + a.color('&155'));
@@ -165,7 +165,7 @@ havoc = {
  
 		if (global[component]) { /* we let components decide what happens when a plugin of theirs is modified */
 			log('detected quest file change: ' + a.color('&155'));
-			havoc.emit('plugin.change', global[comp], f);
+			havoc.emit('plugin.change', global[component], f);
 		}
 		else
 			log('detected quest plugin change but no valid parent component: ' + a.color('&155'));

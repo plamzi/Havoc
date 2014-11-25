@@ -12,7 +12,6 @@ jsdom = require('jsdom');
 
 addStrings({
 	eng: {
-		RECONNECTING_CHAR:	"This character has connected from elsewhere."
 	}
 });
 
@@ -29,9 +28,6 @@ var char_struct = {
 		},
 		set: function(v) {
 			this.setDataValue('attr', stringify(v));
-		},
-		defaultValue: {
-			pref: {}, aff: {}
 		}
 	},
 	points: {
@@ -42,17 +38,7 @@ var char_struct = {
 		set: function(v) {
 			this.setDataValue('points', stringify(v));
 		},
-		allowNull: false,
-		defaultValue: {
-			hit: 100, 
-			maxhit: 100, 
-			mana: 100, 
-			maxmana: 100, 
-			stamina: 100, 
-			maxstamina: 100,
-			exp: 0,
-			gold: 0
-		}
+		allowNull: false
 	},
 	at: {
 		type: Seq.STRING,
@@ -63,6 +49,21 @@ var char_struct = {
 			this.setDataValue('at', stringify(v));
 		}
 	}
+};
+
+var char_attr_default = {
+	pref: {}, aff: {}
+};
+
+var char_points_default = {
+	hit: 100, 
+	maxhit: 100, 
+	mana: 100, 
+	maxmana: 100, 
+	stamina: 100, 
+	maxstamina: 100,
+	exp: 0,
+	gold: 0
 };
 
 var proc_struct = {
@@ -111,14 +112,14 @@ module.exports = {
 
 	updateActors: function() {
 
-		log('char.updateActors: re-init existing online actors');
+		debug('char.updateActors: re-init existing online actors');
 
 		var a = char.getActors();
 
 		for (var i in a) {
 			char.initChar(a[i], 1);
 			if (a[i].pc())
-				log('updated '+a[i].name);
+				info('updated '+a[i].name);
 		}
 	},
 
@@ -176,7 +177,7 @@ module.exports = {
 			for (var i in r)
 				mp[r[i].id] = r[i];
 			
-			log('char.init: finished indexing my().mobproto: '+Object.keys(mp).length);
+			info('char.init: finished indexing my().mobproto: '+Object.keys(mp).length);
 			
 			char.initMobInstances();
 			char.emit('init'); /* item is listening for char init */
@@ -188,7 +189,7 @@ module.exports = {
 		debug('char.initPlugins');
 		
 		var plugins = fs.readdirSync('./plugins').filter(function(i) { return i.match(/^char\..+\.js/i); });
-		log('component detected plugins: ' + plugins.join(', '));
+		info('char component detected plugins: ' + plugins.join(', '));
 		
 		for (var i in plugins) {
 
@@ -201,7 +202,7 @@ module.exports = {
 				p.init(re), delete p.init;
 	
 			point(char.instanceMethods, p);
-			log('loaded: ' + f.color('&155') + ' ' + Object.keys(p).join(', ').font('size=10'));
+			info('loaded: ' + f.color('&155') + ' ' + Object.keys(p).join(', ').font('size=10'));
 		}
 		
 		if (re)
@@ -230,7 +231,7 @@ module.exports = {
 		.then(function(r) {
 			
 			if (!r) {
-				log('char.initMobInstances: no mob instances defined');
+				info('char.initMobInstances: no mob instances defined');
 				my().mobs = [];
 				return;
 			}
@@ -242,7 +243,7 @@ module.exports = {
 					char.initProcs(r[i]);
 				}
 				
-				return log('char.initMobInstances: mob instances already loaded, updated procs only');
+				return info('char.initMobInstances: mob instances already loaded, updated procs only');
 			}
 			
 			my().mobs = r;
@@ -259,13 +260,13 @@ module.exports = {
 						return function() {
 							char.initTimers(r[i]);
 							if (i == r.length - 1)
-								log('char.initMobInstances: finished distributing mob instance timers');
+								info('char.initMobInstances: finished distributing mob instance timers');
 						};
 					}(r, i)
 				);
 			}
 			
-			log('char.initMobInstances: loaded mob instances ' + r.length);
+			info('char.initMobInstances: loaded mob instances ' + r.length);
 		})
 		.then(char.loadUniqueMobs)
 		.then(char.loadSimpleMobs)
@@ -279,12 +280,13 @@ module.exports = {
 		debug('char.createChar');
 		
 		Char.create({
-			name: s.create[0],
-			class: s.create[1],
-			sex: s.create[2],
-			attr: { aff: {}, bg: s.create[3] || 'none', pref: {} },
+			name: s.create.name,
+			class: s.create.cls,
+			sex: s.create.sex.toLowerCase(),
 			trade: 'Adventurer',
 			level: 1,
+			attr: { aff: {}, bg: s.create.bg || 'none', pref: {} },
+			points: char_points_default,
 			UserId: s.user.id,
 			at: config.game.start
 		})
@@ -308,13 +310,13 @@ module.exports = {
 			if (ss[i].ch && ss[i].user.id == ch.s.user.id && ss[i] != ch.s) {
 				if (ss[i].ch.id == ch.id) {
 					ss[i].send(my().RECONNECTING_CHAR);
-					log('reconnecting socket (same char) ', ss[i]);
+					info('reconnecting socket (same char) ', ss[i]);
 					server.closeSocket(ss[i]);
 				}
 				else
 				if (!config.game.allowMultipleCharacters && !ch.immo()) {
 					ss[i].send(my().RECONNECTING);
-					log('reconnecting socket (same user) ', ss[i]);
+					info('reconnecting socket (same user) ', ss[i]);
 					server.closeSocket(ss[i]);
 				}
 			}
@@ -471,7 +473,7 @@ module.exports = {
 		});
 	},
 	
-	/* resets certain properties of a mob instance to the values of their prototype */
+	/* resets certain properties of a mob instance to the values of their prototype, useful during rapid content creation cycles */
 
 	resetMob: function(ch) {
 		var p = ch.getProto();
@@ -510,7 +512,7 @@ module.exports = {
  
 	loadUniqueMobs: function() {
 		
-		info('char.loadUniqueMobs: loading unique mobs, if needed');
+		debug('char.loadUniqueMobs: loading unique mobs, if needed');
 		
 		var r = my().mobproto;
 		var mobs = my().mobs;
@@ -528,7 +530,8 @@ module.exports = {
 
 	loadSimpleMobs: function() {
 
-		log('char.loadSimpleMobs: spawning simple mob instances, if under max');
+		debug('char.loadSimpleMobs: spawning simple mob instances, if under max');
+		
 		var r = my().mobproto;
 		var mobs = my().mobs;
 		

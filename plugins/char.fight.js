@@ -8,7 +8,6 @@ addStrings({
 		IMPOSSIBLE_TO_ATTACK_X:			"You find it impossible to attack %s.",
 		TOO_FAR_FROM_X_TO_Y_Z:			"You are too far from %s to %s %s.",
 		YOU_PREPARE_TO_A: 				"You prepare to %s.",
-		YOUR_ATTACKS:					"&BYour attacks:&n",
 		NOONE_TO_KILL:					"Can't attack someone who isn't here.",
 		CANT_X_SOMEONE_NOT_HERE:		"Can't %s someone who isn't here.",
 		KILL_YOURSELF:					"You can't attack yourself.",
@@ -98,6 +97,11 @@ module.exports = {
 
 	init: function(re) {
 
+		if (re)
+			this.loadAttacks(re);
+		
+		havoc.register('char.fight', 'init', this.loadAttacks);
+		
 		char.register('char.fight', 'enter', function(ch) {
 			
 			ch.setAttacks();
@@ -107,14 +111,18 @@ module.exports = {
 			.register('char.fight', 'remove', ch.setAttacks)
 			.register('char.fight', '2.do', function() { onDo(this); });
 			
-			ch.sendGMCP('ch.points', ch.points);
-	
-			if (ch.pc() && ch.s.portal) {
-				ch.do('attacks');
-				ch.sendGMCP('ch.attacks', ch.attacks);
-			}
 		});
 
+		char.register('char.fight', 'enter.pc', function(ch) {
+
+			ch.sendGMCP('ch.points', ch.points);
+			ch.sendGMCP('ch.attacks', ch.attacks);
+
+			ch.register('char.fight', 'post.stat', function() {
+				ch.snd('\r\n' + 'attacks'.mxpsend());
+			});
+		});
+		
 		char.register('char.fight', 'exit', function(ch) {
 			ch.stopFighting();
 		});
@@ -126,11 +134,6 @@ module.exports = {
 				for (var i in a)
 					a[i].setAttacks();
 		});
-		
-		if (re)
-			this.loadAttacks(re);
-
-		havoc.register('char.fight', 'init', this.loadAttacks);
 	},
 	
 	loadAttacks: function(re) {

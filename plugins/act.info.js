@@ -16,6 +16,7 @@ addStrings({
 	
 	eng: {
 		TEST_USAGE:					"Usage: test color | unicode",
+		WHOIS_USAGE:				"Usage: whois user_id (available in context menus)",
 		NO_SUCH_HELP_FILE:			"No detailed help for this keyword. Your search has been logged so we can improve our help system.",
 		AVAILABLE_COMMANDS:			"Available Commands:",
 		SEE_ALSO:					"See also",
@@ -51,7 +52,7 @@ var onDo = function(ch) {
 		return;
 		
 	for (var i in act.info) {
-		if (i.isAbbrev(ch.input.cmd) && ch.cmd[i]) {
+		if (ch.input.cmd.isAbbrev(i) && ch.cmd[i]) {
 			ch.cmd[i].call(ch, ch.input.arg);
 			return delete ch.input;
 		}
@@ -114,7 +115,8 @@ module.exports = {
 			.write('<FRAME Name="chat" Parent="ChatterBox">'.mxp())
 			//.write('<FRAME Name="guild" Parent="ChatterBox">'.mxp())
 			.write('<FRAME Name="who" Parent="ChatterBox">'.mxp())
-			.write('<FRAME Name="attacks" Parent="ChatterBox">'.mxp());
+			//.write('<FRAME Name="attacks" Parent="ChatterBox">'.mxp())
+			;
 		});
 		
 		user.register('act.info', 'json', function(s, d) {
@@ -467,7 +469,7 @@ module.exports = {
 		var ch = this, m = my()/*, ss = m.sockets*/;
 
 		Char.findAll({ 
-			where: [ 'updatedAt > DATE_SUB(NOW(), INTERVAL 60 DAY)' ],
+			where: [ 'updatedAt > DATE_SUB(NOW(), INTERVAL 30 DAY)' ],
 			order: 'updatedAt DESC',
 			group: 'UserId',
 			limit: 50
@@ -482,8 +484,8 @@ module.exports = {
 			for (var i in r) {
 				var usr = m.userindex[r[i].UserId]; 
 				who
-				+= m.U_HUMAN.style(16, '&178') + ' ' + usr.name.mxpsend('pm ' + usr.id, 'pm ' + usr.name) + ' '
-				+ m.U_GROUP.style(16, '&B') + ' ' + r[i].name.mxpsend('pm ' + usr.id, 'pm ' + r[i].name) + ' '
+				+= m.U_HUMAN.style(16, '&178') + ' ' + usr.name.mxpselect(['pm ' + usr.id, 'whois ' + usr.id ], ['pm ' + usr.name, 'whois ' + usr.name]) + ' '
+				+ m.U_GROUP.style(16, '&B') + ' ' + r[i].name.mxpselect(['pm ' + usr.id, 'stat ' + r[i].id], ['pm ' + r[i].name, 'stat ' + r[i].name]) + ' '
 				+ m.U_STAR.style(16, '&208') + ' ' + r[i].level + ' '
 				+ r[i].updatedAt.toUTCString().substring(0, 11).replace(',','').style(11, '&Ki') + ' '
 				+ '\r\n';
@@ -495,23 +497,25 @@ module.exports = {
 
 	whois: function(arg) {
 		
+		//debug('act.info whois');
+	
 		var ch = this, m = my();
 
 		if (!arg)
-			return;
+			return ch.send(my().WHOIS_USAGE);
 			
 		var usr = m.userindex[arg[0]];
 		
 		if (!usr)
 			return;
 		
-		var whois = m.U_HUMAN.style(16, '&178') + ' ' + usr.name.mxpsend('pm ' + usr.id, 'pm ' + usr.name) + ' ' +
-		+ m.U_SWORDS.style(15, '&R') + ' ' + usr.points.frags + ' '
-		+ m.U_KARMA.style(15, '&M') + ' ' + usr.points.karma + ' '
-		+ usr.updatedAt.toUTCString().substring(0, 11).replace(',' , '').style(11, '&Ki') + ' '
-		+ '\r\n';
+		var whois = m.U_HUMAN.style(16, '&178') + ' ' + usr.name.mxpsend('pm ' + usr.id, 'pm ' + usr.name) + '\r\n\r\n'
+		+ m.U_SWORDS.style(15, '&R') + ' ' + (usr.points.frags || 0 ) + ' '
+		+ m.U_KARMA.style(15, '&212') + ' ' + (usr.points.karma || 0) + '\r\n'
+		+ ('Created: ' + usr.createdAt.toUTCString().substring(0, 16).replace(',' , '')).style(11, '&Ki') + '\r\n'
+		+ ('Last seen: ' + usr.updatedAt.toUTCString().substring(0, 16).replace(',' , '')).style(11, '&Ki') + '\r\n';
 		
-		ch.send(whois);
+		ch.send(whois, 'Modal');
 	},
 	
 	test: function(arg) {

@@ -99,17 +99,14 @@ var pm = function(cmd) {
 	
 	//log('act.social: pm input from ' + ch.name + ': ' + stringify(ch.input));
 	
-	if (cmd == '/a') {
+	if (cmd == '/a') { //debug('act.social: pm abort');
 		
-		//log('pm abort');
-		
-		ch.send(my().PM_ABORTED);
+		if (!ch.portal)
+			ch.send(my().PM_ABORTED);
 		return my().HANDLED;
 	}
 	
-	if (cmd == '/s') {
-		
-		log('act.social: pm send');
+	if (cmd == '/s') { //debug('act.social: pm send');
 		
 		Message.create(ch.pm).success(function() {
 			
@@ -128,6 +125,7 @@ var pm = function(cmd) {
 					dump(e || r); 
 				});
 			}
+			
 			delete(ch.pm);
 		});
 		
@@ -372,7 +370,7 @@ module.exports = {
 			if (!ch.s.portal)
 				ch.send(u.format(my().PM_BEGIN_MESSAGE_X, usr.name));
 			else
-				ch.sendGMCP('ModalEditor', {
+				ch.sendGMCP('ModalInput', {
 					title: 'Private Message for ' + usr.name,
 					after: '\r\n/s',
 					abort: '/a'

@@ -8,7 +8,7 @@ module.exports = {
 	
 	init: function(re) {
 		
-		log('db.init');
+		debug('db.init');
 
 		database = new Seq(config.db.database, config.db.user, config.db.password, {
 			host: config.db.host || 'localhost',

@@ -75,7 +75,7 @@ module.exports = {
 		var m = my();
 		this
 			.snd(m.PROTOCOL.GMCP_START)
-				.snd(name + ' ' + stringify(msg))
+				.write(name + ' ' + stringify(msg))
 					.snd(m.PROTOCOL.GMCP_STOP);
 	},
 

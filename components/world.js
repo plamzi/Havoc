@@ -361,7 +361,7 @@ module.exports = {
 
 	init: function(re) {
 
-		log('world.init');
+		debug('world.init');
 
 		this.loadMaps(re);
 		this.loadOverlays(re);
@@ -412,10 +412,10 @@ module.exports = {
 			}
 
 			my().zone[map.zone] = map;
-			log('world.init: loaded map ' + map.zone + ': ' + map.grid[0].length + 'x' + map.grid.length + ' accessible rooms: ' + n + '/' + Object.keys(map.items).length);
+			info('world.init: loaded map ' + map.zone + ': ' + map.grid[0].length + 'x' + map.grid.length + ' accessible rooms: ' + n + '/' + Object.keys(map.items).length);
 		}
 
-		log('world.init: Finished loading maps');
+		info('world.init: Finished loading maps');
 	},
 
 	loadMapInstance: function(re, proto, id) {
@@ -453,7 +453,7 @@ module.exports = {
 		}
 		
 		my().zone[map.zone] = map;
-		log('world.loadMapInstance: loaded ' + map.zone + ' / ' + map.proto + ': ' + map.grid[0].length + 'x' + map.grid.length);
+		info('world.loadMapInstance: loaded ' + map.zone + ' / ' + map.proto + ': ' + map.grid[0].length + 'x' + map.grid.length);
 	},
 	
 	loadOverlays: function(re) {
@@ -491,7 +491,7 @@ module.exports = {
 				n++;
 			}
 			
-			log('world.init loaded portals: ' + n + ' / ' + r.length);
+			info('world.init loaded portals: ' + n + ' / ' + r.length);
 			
 			//return RoomProc.sync();
 		})/*

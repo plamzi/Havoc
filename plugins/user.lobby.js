@@ -9,37 +9,48 @@ addStrings({
 
 	eng: {
 	
-		PROMPT_CHAR:		"To create or play existing, select a character name.\r\nBy what name would you like to be known? ",
+		CHECKED:			my().U_BOX_CHECKED.style(18, '&n'),
+		UNCHECKED:			my().U_BOX_EMPTY.style(18, '&n'),
 		
-		RESET_PROMPT_EMAIL:	"Enter the email address associated with your account: ",
-		RESET_PROMPT_TOKEN:	"Enter the token you received in an email: ",
-		RESET_EMAIL_SENT:	"If we have this email on record, a reset token has been sent.",
-		RESET_EMAIL_SUBJECT:"Your password reset token",
-		RESET_EMAIL_BODY:	"Hello,\r\n\r\nA password reset token was requested for " + config.game.name + " username '%s'.\r\nThe reset token is: %s\r\n\r\nEnter the token at the login prompt to complete your password reset.\r\n\r\nYours sincerely,\r\nVeda",
-		CHANGE_PASSWORD:	"Enter a new password (or " + "cancel".mxpsend('') + "): ",
-		YOU_CHANGED_PASSWORD: "You changed your password successfully",
+		PROMPT_CHAR:		'Create new character'.mxpsend('new') + " or click on existing character name.",
+		CREATE_NEW:			'Create New',
+		LOBBY:				"Lobby:",
+		RETURN_TO_LOBBY:	"Back to lobby",
 		
+		PASSWORD_NOT_CHANGED: "Password was not changed.",
+		PASSWORDS_DIFFER:	"Passwords did not match so it was not changed.",
+		PASSWORD_CHANGED: 	"You have successfully changed your password.",
+		PROMPT_NEW_CHAR:	"Name your new character:",
+		HEROIC_NAME_LIKE_:	"a heroic name like ",
+		CANCEL:				"Cancel",
+		SUGGEST:			"Suggest",
+		ACCEPT:				"Accept",
+		NEXT:				"Next",
 		CHAR_EXISTS:		"The name '%s' is not available. Please try another: ",
-		CHAR_AVAILABLE:		"Would you like to create '%s'? ",
+		CHAR_AVAILABLE:		"\r\nWould you like to create '%s'? ",
 		CHAR_INVALID:		"Invalid character name. Please try another: ",
 		CREATION_ERROR: 	'Creation error:',
-		INVALID_CHARNAME: 	'Invalid character name. Try something more heroic, like &c%s&n.',
+		INVALID_CHARNAME: 	'Invalid character name. Try something more heroic.',
+		CREATION_ABORTED: 	'Character creation was cancelled.',
 		MALE:				"Male",
+		MALE_INFO:			"Ale-chugging, back-slapping brutes with nary a care.",
 		FEMALE:				"Female",
+		FEMALE_INFO:		"Style-packing, head-turning damsels sans distress.",
 		BACK:				("B".font('color=white') + "ack").mxpsend('back') + ' ',
 		SELECT_SEX:			" Select sex: ",
 		SELECT_CLASS:		" Select class: ",
-		SELECT_BACKGROUND:	" Select background:\r\n" 
-							+ ("Martial").mxpsend('martial', 'A martial background makes you untrackable and grants +5% Experience.') + ' '
-							+ ("Scholarly").mxpsend('scholarly', 'A scholarly background grants permanent sense life and detect magic.') + ' '
-							+ ("Criminal").mxpsend('criminal', 'A criminal background grants permanent infravision and protection from good.') + ' '
-							+ ("Spiritual").mxpsend('spiritual', 'A spiritual background bestows permanent detect align and protection from evil.'),
+		SELECT_BACKGROUND:	" Select background:",
+							
+		CHAR_BACKGROUNDS:	{
+		                 	 	Martial: "A martial background makes you more effective in melee combat.",
+		            		   	Spiritual: "A spiritual background makes you better at enhancement skills and spells (buffs).",
+		            		   	Criminal:  "A criminal background makes you better at evasive and ranged combat skills.",
+		            		   	Scholarly: "A scholarly background makes you better at targeted skills and spells."
+							},
 		CREATE_CONFIRM:		" Create %s, a %s %s with a %s past? ",
 		YOU_SELECTED: 		"You selected",
 		YES_NO:				("Y".font('color=white') + "es").mxpsend('yes') + ' ' + ("N".font('color=white') + "o").mxpsend('no') + ' ',
-		
-		YOUR_PREFERENCES: 	"Notification Options:".color('&c'),
-		
+		YOUR_PREFERENCES: 	"Notification Options:",
 		USER_PREFERENCES:	[
 		            		 ['Forward Private Messages', 'Forward any private messages immediately to your email address (if supplied).'],
 		            		 ['Daily Summary Email', 'Once daily, send an email with in-game updates such as guild news and activities, private messages, etc.'],
@@ -52,7 +63,7 @@ module.exports = {
 	
 	init: function(re) {
 		
-		log('user.lobby init');
+		debug('user.lobby init');
 		
 		point(user, this, null, ['init']); /* merge into user component methods, leave out the init method */
 		
@@ -62,70 +73,81 @@ module.exports = {
 			user.updateUsers();
 	},
 	
-	lobby: function(s) { /* List all characters under a player's account */
+	lobby: function(s, err) { /* List all characters under a player's account */
 		
-		var m = my(), ss = m.sockets;
+		var m = my(), msg = '';
 
 		if (s.ch) {
-			log('returned to char menu', s);
+			info('user.lobby: after game exit', s);
 			delete s.ch;
 		}
-		else
-			log('user.lobby: first entry', s);
+		else {
+			info('user.lobby: entry w/o a char', s);
+		}
 
-		s.send('\r\n' 
-			+ m.U_GEAR.style(16, '&178').mxpsend('pref', 'Manage your user account preferences.') + ' ' 
-			+ this.displayName(s.user).mxpsend('password', 'Click to set or change your account password.').style(12, '&Ki') + ' ' 
-			+ m.U_ENVELOPE.style(16, '&178').mxpsend('email', 'Change or set an email address to enable notifications.') + ' ' 
-			+ (s.user.email.length ? s.user.email : 'no email').mxpsend('email').style(12, '&Ki') + ' '
-			
-		);
-
+		s.sendGMCP('Modal', { close: 1 });
+		
+		if (err && !s.portal)
+			s.send(err);
+		
+		msg = m.U_GEAR.style(16, '&178').mxpsend('pref', 'Manage your user account preferences.') + ' ' 
+			+ user.displayName(s.user).mxpsend('password', 'Click to set or change your account password.').style(12, '&Ki') + ' ' 
+			+ m.U_ENVELOPE.style(16, '&178') + ' ' 
+			+ (s.user.email.length ? s.user.email : 'no email').mxpsend('email', 'Set up or change your email address.').style(12, '&Ki') + '\r\n';
+	
 		for (var i in s.user.chars) {
 			var a = s.user.chars[i];
-			s.send(
-				m.U_PAWN.style(16, '&178') + ' '
+			var c = m.U_PAWN.style(16, '&B') + ' '
 				+ a.name.mxpsend(a.name) + ' ' 
 				+ m.U_STAR.color('&208') + ' ' 
 				+ a.level + ' ' + m.SEX[a.sex].symbol + ' ' 
-				+ (a.class + ', ' + a.trade).color('&Ki')
-			);
+				+ (a.class + ', ' + a.trade).color('&Ki') + '\r\n';
+			msg += c;
 		}
 
-		s.snd('\r\n' + m.PROMPT_CHAR);
-		s.sendGMCP('user.chars', s.user.chars);
+		msg += '\r\n' + m.PROMPT_CHAR;
 		
-		s.next = user.charName;
+		if (s.portal && !s.gui)
+			s.sendGMCP('Modal', {
+				title: my().LOBBY,
+				info: err,
+				mxp: msg.replace(/\r\n/g, '\x1b<br\x1b>').colorize(),
+				closeable: 0,
+				buttons: [{
+					text: my().CREATE_NEW,
+					send: 'new'
+				}]
+			});
+		else
+			s.send('\r\n' + msg);
+		
+		s.sendGMCP('user.chars', s.user.chars);
+		s.next = user.lobbyAction;
 	},
 	
-	charName: function(s, d) {
+	lobbyAction: function(s, d) {
 		
-		log('user.charName');
+		debug('user.lobbyAction: ' + stringify(d));
 		
-		if (!d.length)
-			return user.lobby(s);
-
-		if (d == 'chars')
+		if (!d || !d.length || d == 'chars')
 			return user.lobby(s);
 		
-		if (d == 'email') {
-			s.snd(my().PROMPT_EMAIL);
-			s.next = user.changeEmail;
-			return;
-		}
+		if (d == 'new')
+			return user.createChar(s);
 		
-		if (d == 'pref') {
-			user.showPrefs(s);
-			return;
-		}
+		if (d == 'email')
+			return user.changeEmailStart(s);
 		
-		if (d == 'password') {
-			s
-			.snd(my().PROTOCOL.WILL_ECHO)
-			.snd('\r\n' + my().CHANGE_PASSWORD);
-			s.next = user.changePassword;
-			return;
-		}
+		if (d == 'password')
+			return user.changePasswordStart(s);
+		
+		if (d == 'pref')
+			return user.showPrefs(s);
+		
+		return user.selectChar(s, d);
+	},
+	
+	selectChar: function(s, d) {
 		
 		d = d.cap();
 
@@ -136,54 +158,124 @@ module.exports = {
 			
 			if (!r) {
 				
-				if (!user.validName(d, 'char')) { 
-					s.snd(u.format(my().INVALID_CHARNAME, user.genCharname(d)));
-					s.next = user.charName;
-					return;
-				}
+				if (!user.validName(d, 'char'))
+					return user.lobby(s, my().INVALID_CHARNAME);
 				
 				/* available character name */
-				s.next = user.confirmChar;
-				s.snd(u.format(my().CHAR_AVAILABLE, d) + ' ' + my().YES_NO);
-				s.charname = d;
+				user.createChar(s, d);
 			}
 			else /* existing character name belonging to this user */
 			if (s.user.id == r.UserId) {
 				s.ch = r;
 				user.enter(s);
 			}
-			else { /* existing char name belonging to another user */
-				s.snd(u.format(my().CHAR_EXISTS, d));
-				s.next = user.charName;
-			}
+			else /* existing char name belonging to another user */
+				user.lobby(u.format(my().CHAR_EXISTS, d));
 		});
+	},
+	
+	changeEmailStart: function(s) {
+		
+		s.sendGMCP('Modal', { close: 1 });
+		
+		if (s.portal)
+			s.sendGMCP('ModalInput', {
+				title: my().PROMPT_EMAIL,
+				tag: 'input',
+				type: 'email',
+				placeholder: my().EMAIL_PLACEHOLDER,
+				text: s.user.email || '',
+				sendText: 'Save',
+				abort: s.user.email || ''
+			});
+		else
+			s.snd(my().PROMPT_EMAIL);
+		
+		s.next = user.changeEmail;
+		return;
 	},
 	
 	changeEmail: function(s, d) {
 
-		log('user.changeEmail: ' + stringify(d));
+		debug('user.changeEmail: ' + stringify(d));
 		
 		s.user.updateAttributes({ email: d }).success(function() {
 			user.lobby(s);
 		});
 	},
+
+	changePasswordStart: function(s) {
+		
+		s.sendGMCP('Modal', { close: 1 });
+		
+		if (!s.portal) {
+			s.snd(my().PROTOCOL.WILL_ECHO);
+			s.snd('\r\n' + my().CHANGE_PASSWORD);
+		}
+		else
+			s.sendGMCP('ModalInput', {
+				title: my().CREATE_NEW_PASSWORD,
+				info: my().PASSWORD_INFO,
+				placeholder: my().NEW_PASSWORD_PLACEHOLDER,
+				tag: 'input',
+				type: 'password',
+				sendText: 'Save',
+				attr: 'change',
+				abort: ''
+			});
+			
+		s.next = user.changePassword;
+		return;
+	},
 	
+	changePassword: function(s, d) {
+		
+		if (!d)
+			return user.lobby(s, my().PASSWORD_NOT_CHANGED);
+		
+		if (!user.validPass(d))
+			return user.lobby(s, my().INVALID_PASSWORD);
+		
+		s.password = d;
+		s.snd('\r\n' + my().PASS_CONFIRM);
+		s.next = user.changePasswordConfirm;
+	},
+	
+	changePasswordConfirm: function(s, d) {
+		
+		if (!d)
+			return user.lobby(s, my().PASSWORD_NOT_CHANGED);
+		
+		if (s.password != d)
+			return user.lobby(s, my().PASSWORDS_DIFFER);
+		
+		s.user.updateAttributes({ password: md5(d) })
+		.success(function() {
+			user.lobby(s, my().PASSWORD_CHANGED);
+		});
+	},
+
 	showPrefs: function(s) {
 
-		log('user.showPrefs');
+		debug('user.showPrefs');
 		
-		var checked = my().U_SQUARE_FULL.style(18, '&n');
-		var unchecked = my().U_SQUARE_EMPTY.style(18, '&n');
-		
-		s.send('\r\n' + my().YOUR_PREFERENCES);
+		var m = my(), msg = '';
 		
 		my().USER_PREFERENCES.forEach(function(i) {
-			s
-			.snd(s.user.attr.pref[i[0]] ? checked : unchecked)
-			.snd(' ' + i[0].mxpsend(i[0], i[1]) + '\r\n');
+			msg += ((s.user.attr.pref[i[0]] ? m.CHECKED : m.UNCHECKED) + ' ' + i[0]).mxpsend(i[0], i[1]) + '\r\n';
 		});
 		
-		s.snd(' Done '.mxpsend());
+		msg += '\r\n' + m.RETURN_TO_LOBBY.mxpsend();
+		
+		if (!s.portal)
+			s.snd('\r\n' + m.YOUR_PREFERENCES.color('&178') + msg);
+		else
+			s.sendGMCP('Modal', {
+				title: m.YOUR_PREFERENCES,
+				mxp: msg.replace(/\r\n/g, '\x1b<br\x1b>').colorize(),
+				buttons: []
+			});
+
 		s.next = user.updatePrefs;
 	},
 	
@@ -202,7 +294,6 @@ module.exports = {
 		var pref = copy(s.user.attr.pref);
 		
 		pref[match] = pref[match] ? 0 : 1;
-		
 		dump(pref);
 		
 		s.user.setAttr({ pref: pref }, function() {
@@ -210,172 +301,220 @@ module.exports = {
 		});
 	},
 	
-	changePassword: function(s, d) {
+	charPromptClass: function(s, d) {
+
+		debug('user.charPromptClass');
 		
-		if (!d)
-			return user.lobby(s);
+		var m = my(), cls = m.classes, names = cls.map(function(i) { return i.name; }), msg = '';
 		
-		if (!user.validPass(d)) {
-			s.send(my().INVALID_PASSWORD);
-			s.snd(my().CHANGE_PASSWORD);
-			return;
+		if (!d) {
+			delete s.create;
+			return user.lobby(s, m.CREATION_ABORTED);
 		}
 		
-		s.password = d;
-		s.snd('\r\n' + my().PASS_CONFIRM);
-		s.next = user.changePasswordConfirm;
+		if (d != 'start') {
+			
+			if (d == 'next')
+				return user.createChar(s);
+			
+			if (!names.has(d))
+				return user.createChar(s);
+			
+			s.create.cls = d;
+		}
+		
+		cls.forEach(function(i) {
+			msg += ((s.create.cls && s.create.cls == i.name ? m.CHECKED : m.UNCHECKED) + ' ' + i.name).mxpsend(i.name, i.desc) + '\r\n';
+		});
+		
+		msg += '\r\n' + m.RETURN_TO_LOBBY.mxpsend('') + '  |  ' + m.NEXT.mxpsend();
+		
+		if (!s.portal)
+			s.snd(m.SELECT_CLASS.color('&178') + '\r\n\r\n' + msg);
+		else
+			s.sendGMCP('Modal', {
+				title: m.SELECT_CLASS,
+				mxp: msg.replace(/\r\n/g, '\x1b<br\x1b>').colorize(),
+				buttons: []
+			});
 	},
 	
-	changePasswordConfirm: function(s, d) {
+	charPromptSex: function(s, d) {
+
+		debug('user.charPromptSex');
 		
-		if (!d.length) {
-			s.snd(my().PROTOCOL.WONT_ECHO);
-			return user.lobby(s);
+		var m = my(), msg = '';
+		
+		if (!d) {
+			delete s.create;
+			return user.lobby(s, m.CREATION_ABORTED);
 		}
 		
-		if (s.password != d) {
-			s.send(my().PASSWORDS_DIFFER.style(11, "&Ki"));
-			s.snd(my().CHANGE_PASSWORD);
+		if (d != 'start') {
+			
+			if (d == 'next')
+				return user.createChar(s);
+			
+			if (![m.MALE, m.FEMALE].has(d))
+				return user.createChar(s);
+			
+			s.create.sex = d;
+		}
+		
+		msg += ((s.create.sex && s.create.sex == m.MALE ? m.CHECKED : m.UNCHECKED) + ' ' + m.U_MALE + ' ' + m.MALE).mxpsend(m.MALE, m.MALE_INFO) + '\r\n';
+		msg += ((s.create.sex && s.create.sex == m.FEMALE ? m.CHECKED : m.UNCHECKED) + ' ' + m.U_FEMALE + ' ' + m.FEMALE).mxpsend(m.FEMALE, m.FEMALE_INFO) + '\r\n';
+		
+		msg += '\r\n' + m.RETURN_TO_LOBBY.mxpsend('') + '  |  ' + m.NEXT.mxpsend();
+		
+		if (!s.portal)
+			s.snd(m.SELECT_SEX.color('&178') + '\r\n\r\n' + msg);
+		else
+			s.sendGMCP('Modal', {
+				title: m.SELECT_SEX,
+				mxp: msg.replace(/\r\n/g, '\x1b<br\x1b>').colorize(),
+				buttons: []
+			});
+	},
+	
+	charPromptBg: function(s, d) {
+
+		debug('user.charPromptBg');
+		
+		var m = my(), bg = m.CHAR_BACKGROUNDS, msg = '';
+		
+		if (!d) {
+			delete s.create;
+			return user.lobby(s, m.CREATION_ABORTED);
+		}
+		
+		if (d != 'start') {
+			
+			if (d == 'next')
+				return user.createChar(s);
+			
+			if (!Object.keys(bg).has(d))
+				return user.createChar(s);
+
+			s.create.bg = d;
+		}
+		
+		dump(s.create);
+		
+		for (var i in bg) {
+			msg += ((s.create.bg && s.create.bg == i ? m.CHECKED : m.UNCHECKED) + ' ' + i).mxpsend(i, bg[i]) + '\r\n';
+		};
+		
+		msg += '\r\n' + m.RETURN_TO_LOBBY.mxpsend('') + '  |  ' + m.NEXT.mxpsend();
+		
+		if (!s.portal)
+			s.snd(m.SELECT_BACKGROUND.color('&178') + '\r\n\r\n' + msg);
+		else
+			s.sendGMCP('Modal', {
+				title: m.SELECT_BACKGROUND,
+				mxp: msg.replace(/\r\n/g, '\x1b<br\x1b>').colorize(),
+				buttons: []
+			});
+	},
+	
+	charPromptName: function(s, d, info) {
+		
+		debug('user.charPromptName');
+		
+		if (!d) {
+			delete s.create;
+			return user.lobby(s, m.CREATION_ABORTED);
+		}
+		
+		if (d == 'next')
+			return user.createChar(s);
+		
+		if (d == 'start') {
+			
+			if (s.portal) {
+				
+				s.sendGMCP('Modal', { close: 1 }); /* buttons are custom, so we need to close and rebuild */
+				
+				s.sendGMCP('ModalInput', {
+					
+					title: my().PROMPT_NEW_CHAR,
+					info: info,
+					text: user.genCharname(),
+					tag: 'input',
+					type: 'text',
+					abort: 'chars',
+					buttons: [
+					    { text: my().CANCEL, send: '' },
+					    { text: my().SUGGEST, send: 'start' },
+					    { text: my().ACCEPT }
+					]
+				});
+			}
+			else {
+				!info || s.send(info);
+				s.snd('\r\n' + my().PROMPT_NEW_CHAR);
+			}
+			
 			return;
 		}
 		
-		s.snd(my().PROTOCOL.WONT_ECHO);
+		Char.find({
+			where: { name: d }
+		})
+		.success(function(r) {
 			
-		s.user
-		.updateAttribute({ password: md5(d) })
-		.success(function() {
-			s.send(my().YOU_CHANGED_PASSWORD);
-			user.lobby(s);
+			if (r)
+				return user.charPromptName(s, d, u.format(my().CHAR_EXISTS, d));
+
+			if (!user.validName(d, 'char'))
+				return user.charPromptName(s, d, my().INVALID_CHARNAME);
+			
+			/* available character name */
+			s.create.name = d;
+			user.createChar(s);
 		});
 	},
+	
+	createChar: function(s) {
 
-	confirmChar: function(s, d) {
-		
-		log('user.confirmChar: '+d, s);
-		
-		if (!d || d.cap()[0] != 'Y') {
-			delete s.charname;
-			return user.lobby(s);
-		}
-		
-		s.create = [];
-		user.create(s, s.charname);
-	},
+		debug('user.createChar');
 
-	create: function(s, d) {
-
-		log('user.create ' + d);
 		var m = my(), cls = m.classes;
-		
-		if (s.create.length == 0) {
-			
-			if (!d || d.cap()[0] == 'B') {
-				delete s.charname, delete s.create;
-				return user.lobby(s);
-			}
-		
-			s.create = [ s.charname ];
-			s.next = user.create;
-			delete s.charname;
-			
-			s.snd('\r\n');
 
-			for (var i in cls)
-				if (cls[i].minLevel == 0)
-					s.send(cls[i].name.mxpsend(cls[i].name) + ' ' + cls[i].desc.color('&Ki'));
-					
-			s.snd('\r\n' + m.BACK.mxpsend() + m.SELECT_CLASS);
+		if (!s.create) {
+			s.create = {};
+			s.sendGMCP('Modal', { close: 1 });
 		}
-		else
-		if (s.create.length == 1) {
-			
-			if (!d || d.cap()[0] == 'B') {
-				delete s.charname, delete s.create;
-				return user.lobby(s);
-			}
-
-			d = cls.filter(function(c) { return d.isAbbrev(c.name); });
-			
-			if (!d) {
-				s.charname = s.create.pop();
-				return user.create(s);
-			}
-			
-			s.create.push(d[0].name);
-			
-			s.snd(
-			m.YOU_SELECTED + ' '+d[0].name.color('&W')  + '\r\n\r\n'
-			+ m.MALE.mxpsend() + ' ' + m.FEMALE.mxpsend() + '\r\n\r\n' 
-			+ m.BACK.mxpsend() + m.SELECT_SEX);
+		
+		if (!s.create.cls) {
+			s.next = user.charPromptClass;
+			return user.charPromptClass(s, 'start');
 		}
-		else
-		if (s.create.length == 2) {
-			
-			if (!d || d.cap()[0] == 'B') {
-				delete s.charname, delete s.create;
-				return user.lobby(s);
-			}
-			
-			d = d.cap();
-			
-			if (d[0] == 'M')
-				s.create.push('male');
-			else
-			if (d[0] == 'F')
-				s.create.push('female');
-			else
-				return user.create(s, s.create.pop());
-			
-			s.Send(m.YOU_SELECTED + ' ' + s.create[2].color('&W'));
-			s.snd(m.BACK.mxpsend() + m.SELECT_BACKGROUND);	
+		
+		if (!s.create.sex) {
+			s.next = user.charPromptSex;
+			return user.charPromptSex(s, 'start');
 		}
-		else
-		if (s.create.length == 3) {
-			
-			if (!d || d.cap()[0] == 'B') {
-				delete s.charname, delete s.create;
-				return user.lobby(s);
-			}
-			
-			d = d.cap();
-			
-			if (d.isAbbrev('scholarly'))
-				s.create.push('scholarly');
-			else
-			if (d.isAbbrev('criminal'))
-				s.create.push('criminal');
-			else
-			if (d.isAbbrev('martial'))
-				s.create.push('martial');
-			else
-			if (d.isAbbrev('spiritual'))
-				s.create.push('spiritual');
-			
-			s.Send(m.YOU_SELECTED + ' ' + s.create[3].color('&W'));
-			s.snd(u.format(m.BACK.mxpsend() + m.CREATE_CONFIRM + ' ' + m.YES_NO, s.create[0], s.create[2], s.create[1], s.create[3]));	
+		
+		if (!s.create.bg) {
+			s.next = user.charPromptBg;
+			return user.charPromptBg(s, 'start');
 		}
-		else
-		if (s.create.length == 4) {
-			
-			if (!d || d.cap()[0] == 'B') {
-				delete s.charname, delete s.create;
-				return user.lobby(s);
-			}
-			
-			if (d.cap()[0] == 'N') {
-				delete s.charname, delete s.create;
-				return user.lobby(s);
-			}
-			
-			/* pass the baton to char component */
-			user.emit('create.pc', s);
+		
+		if (!s.create.name) {
+			s.next = user.charPromptName;
+			return user.charPromptName(s, 'start');
 		}
+		
+		/* ready to create - hand off to char component */
+		user.emit('create.pc', s);
 	},
 	
 	enter: function (s) {
 		
 		delete s.next;
 		s.ch.s = s;
+		
+		s.sendGMCP('Modal', { close: 1 });
 		
 		log('user.enter', s);
 		user.emit('enter', s.ch);

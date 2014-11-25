@@ -46,10 +46,7 @@ var guild_struct = {
 		set: function(v) {
 			this.setDataValue('attr', stringify(v));
 		},
-		allowNull: false,
-		defaultValue: {
-			ranks: ["Leader", "Master", "Lieutenant", "Member", "Initiate"]
-		}
+		allowNull: false
 	},
 	
 	points: {
@@ -60,16 +57,22 @@ var guild_struct = {
 		set: function(v) {
 			this.setDataValue('points', stringify(v));
 		},
-		allowNull: false,
-		defaultValue: { /* we can use this to store lifetime guild stats (e. g. frags members scored while in this guild) as well as shared changing points like guild gold */
-			exp: 0,
-			gold: 0,
-			frags: 0,
-			qp: 0,
-			karma: 0
-		}
+		allowNull: false
 	}
 };
+
+var guild_attr_default = { /* we set defaults manually because Seq.TEXT doesn't support default values */
+	ranks: ["Leader", "Master", "Lieutenant", "Member", "Initiate"]
+};
+
+var guild_points_default = { /* we can use this to store lifetime guild stats (e. g. frags members scored while in this guild) as well as shared changing points like guild gold */
+	exp: 0,
+	gold: 0,
+	frags: 0,
+	qp: 0,
+	karma: 0
+};
+
 
 /* private method taking care of persistence stuff */
 
@@ -126,7 +129,9 @@ module.exports = {
 			if (!r)
 				Guild.create({
 					name: name,
-					motto: motto
+					motto: motto,
+					attr: guild_attr_default,
+					points: guild_points_default
 				}).success(function(guild) {
 					
 					ch.send(u.format(my().GUILD_YOU_CREATED_X, guild.name));
@@ -241,7 +246,7 @@ module.exports = {
 	
 		ch.send(vict.guild.name.style('guild'));
 		ch.send(vict.guild.motto.style('info'));
-		//ch.send('Members: ' + ch.guild.members);
+		ch.send(('Members: ' + ch.guild.members).mxpsend('guild members'));
 
 		ch.snd(m.U_STAR.style(15, '&208') + ' ' + vict.guild.level + ' ');
 		ch.snd(m.U_SWORDS.style(15, '&R') + ' ' + vict.guild.points.frags + ' ');

@@ -140,7 +140,7 @@ module.exports = {
 
 	path: function(to) {
 		
-		log('char.path to '+stringify(to));
+		info('char.path to '+stringify(to));
 
 		var ch = this, at = ch.at, limit = 0, i, n, e, p, q = [], h = [ at.x + '@' + at.y ];
 
@@ -162,7 +162,7 @@ module.exports = {
 			ch.at = n[1];
 
 			if (++limit > 1000) {
-				log('char.move path hit safety limit (1000 iterations).');
+				warning('char.move path hit safety limit (1000 iterations).');
 				return null;
 			}
 
@@ -180,7 +180,7 @@ module.exports = {
 
 				if (e.x == to.x && e.y == to.y) {
 					ch.at = at;
-					log('char.move path found in this many iterations: '+limit);
+					info('char.move path found in this many iterations: '+limit);
 					a.shift();
 					return a;
 				}

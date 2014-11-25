@@ -24,28 +24,53 @@ module.exports = {
 			/* Create character support */
 			if (d.create) {
 			
-				log('detected json char create attempt');
+				debug('detected JSON char create attempt');
 				
 				if (!d.name || !user.validName(d.name, 'char')) {
 					var msg = u.format(my().INVALID_CHARNAME, user.genCharname(d).color('&B'));
 					s.Send( (my().CREATION_ERROR + '\r\n' + msg).mxpdest('Modal') );
 				}
 				
-				s.create = [ d.name.cap(), d.cls.cap(), d.sex.toLowerCase(), d.bg.toLowerCase() ];
-				user.emit('create.pc', s);
+				s.create = { 
+					name: d.name.cap(), 
+					cls: d.cls.cap(), 
+					sex: d.sex.toLowerCase(), 
+					bg: bg.toLowerCase()
+				};
 				
-				return;
+				return user.emit('create.pc', s);
 			}
 			
-			if (d.genCharname) {
-				s.sendGMCP('create.suggest', user.genCharname(d));
-				return;
+			if (d.genCharname)
+				return s.sendGMCP('create.suggest', user.genCharname(d));
+				
+			/* Portal app authentication */
+			if (d.username && d.password) {
+				
+				info('detected JSON auth attempt');
+				
+				s.username = d.username;
+				return user.password(s, d.password);
+			}
+			
+			/* Portal app password change from lobby */
+			if (d.password1 && d.password2) {
+				
+				info('detected JSON password reset / change');
+				s.password = d.password1;
+				
+				if (s.user)
+					user.changePasswordConfirm(s, d.password2);
+				else
+					user.passConfirm(s, d.password2);
+					
+				return;	
 			}
 			
 			/* Facebook authentication */
 			if (d.fbid) {
 			
-				log('detected facebook auth attempt');
+				info('detected JSON facebook auth attempt');
 				
 				s.username = d.fbid;
 				s.password = d.fbid;
@@ -63,7 +88,8 @@ module.exports = {
 			
 			/* Facebook user details */
 			if (d.fb) {
-				log('detected json facebook user details');
+				
+				info('detected json facebook user details');
 				!s.user || s.user.setAttr({ fb: d.fb });
 				return;
 			}

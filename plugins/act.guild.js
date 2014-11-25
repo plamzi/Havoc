@@ -61,6 +61,8 @@ addStrings({
 		
 		GUILD_NOT_ENOUGH_POWERS:	"Your rank is not high enough for this.",
 		
+		GUILD_MEMBERS:				"Guild Members:",
+		
 		GUILD_MEMBER_NOT_FOUND:		"There is no guild character by this name online.",
 		
 		GUILD_X_IS_NOT_A_MEMBER:	"%s is not a member of your guild.",
@@ -407,14 +409,14 @@ module.exports = {
 				}
 				
 				members +=
-				r[i].updatedAt.toUTCString().substring(0, 11).replace(',','').style(11, '&Ki') + ' '
-				+ m.U_HUMAN.style(16, '&178') + ' ' + user.name.mxpselect(o, hint) + ' '
+				  m.U_HUMAN.style(16, '&178') + ' ' + user.name.mxpselect(o, hint) + ' '
 				+ m.U_GROUP.style(16, '&B') + ' ' + r[i].name.mxpsend('pm ' + user.id, 'pm ' + r[i].name) + ' '
-				+ m.U_STAR.style('guild') + ' ' + ch.getGuildRank(user) 
+				+ m.U_STAR.style('guild') + ' ' + ch.getGuildRank(user) + ' '
+				+ r[i].updatedAt.toUTCString().substring(0, 11).replace(',','').style(11, '&Ki') + ' '
 				+ '\r\n';
 			}
 			
-			ch.send(members, 'guild');
+			ch.send(my().GUILD_MEMBERS + '\r\n\r\n' + members, 'Modal');
 		});
 	},
 
@@ -503,7 +505,7 @@ module.exports = {
 			return ch.send(u.format(my().GUILD_VALID_RANKS_ARE_X, ch.guild.attr.ranks.reverse().join(', ')));
 		
 		usr = vict ? vict.user : usr;
-		
+
 		if (!usr)
 			return ch.send(my().GUILD_MEMBER_NOT_FOUND);
 			

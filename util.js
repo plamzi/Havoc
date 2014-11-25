@@ -302,6 +302,8 @@ String.prototype.nocolor = function(a) { return ansi(this.replace(/\&[0-9]+/, ''
 /* Strip line feeds and replace with single space */
 String.prototype.nolf = function(a) { return this.replace(/[\r\n]/g, ' '); };
 
+String.prototype.colorize = function() { return ansi(this, true); };
+
 /* MXP begin */
 
 String.prototype.mxp = function() { return '\x1b[1z' + this + '\x1b[7z'; };
@@ -310,7 +312,10 @@ String.prototype.font = function(a) { return ('<font '+a+'>').mxp() + this + '</
 
 String.prototype.mxpsend = function(a, b) { return ('<send href="'+ ( exists(a) ? a : this ) + '"' + ( b ? ' hint="'+b+'"' : '') + '>').mxp() + this + '</send>'.mxp(); };
 
-String.prototype.mxpselect = function(arr, b) { return ('<send href="'+arr.join('|')+'"'+(b?' hint="'+b+'"':'')+'>').mxp() + this + '</send>'.mxp(); };
+String.prototype.mxpselect = function(arr, b) { 
+	var hint = (b && b.pop) ? b.join('|') : b;
+	return ('<send href="'+arr.join('|') + '"' + ( b ? ' hint="' + hint + '"':'') +'>').mxp() + this + '</send>'.mxp(); 
+};
 
 String.prototype.mxpdest = function(b) { var a = this; return ('<DEST '+b+'>').mxp() + a + '</DEST>'.mxp(); };
 
