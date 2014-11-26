@@ -21,7 +21,7 @@ addStrings({
 		AVAILABLE_COMMANDS:			"Available Commands:",
 		SEE_ALSO:					"See also",
 		STAT_USAGE:					"Usage: stat [target] (For items, use " + "id".mxpsend('help identify') + ")",
-		X_ENTERED_THE_WORLD:		"\r\n%s entered the world of Aaralon on " + new Date() + "."
+		X_ENTERED_THE_WORLD:		"\r\n%s entered the world of %s on " + new Date() + "."
 	}
 });
 
@@ -106,7 +106,7 @@ module.exports = {
 		user.register('act.info', 'create', function() { index('user'); });
 
 		user.register('act.info', 'do.portal', function(s) {
-			
+
 			info('act.info setting up mxp frames for a portal client', s);
 			
 			s.write('<FRAME Name="ChatterBox">'.mxp())
@@ -122,7 +122,7 @@ module.exports = {
 		user.register('act.info', 'json', function(s, d) {
 		
 			if (d.portal) {
-				s.portal = d.portal;
+				s.portal = d.portal; /* we assign the incoming value so that we can set it to a version, e. g. */
 				info('portal client detected', s);
 				user.emit('do.portal', s);
 			}
@@ -176,12 +176,12 @@ module.exports = {
 			ch.sendGMCP('ch.points ', ch.points);
 		});
 		
-		/* unlike char enter, this event will be called only once per char entry, and not on dynamic reloads */
+		/* unlike char enter, user enter event will be called only once per char entry, and not on dynamic reloads e. g. */
 		user.register('act.info', 'enter', function(ch) {
 			var ss = my().sockets;
 			for (var i in ss)
 				if (ss[i].ch)
-					ss[i].send(u.format(my().X_ENTERED_THE_WORLD.style('info'), ch.name));
+					ss[i].send(u.format(my().X_ENTERED_THE_WORLD.style('info'), ch.name, config.game.name));
 		});
 	},
 	

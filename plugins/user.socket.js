@@ -20,7 +20,7 @@ module.exports = {
 	
 	do: function(d) {
 		
-		//log('got: |' + d + '|');
+		log('got: |' + d + '|', s);
 		var s = this, cmd;
 		
 		if (d && d.length) /* normalize CR LF */
@@ -71,7 +71,7 @@ module.exports = {
 	
 	Send: function(msg) { this.snd(msg + '\r\n\r\n'); return this; },
 	
-	sendGMCP: function (name, msg) {
+	sendGMCP: function(name, msg) {
 		var m = my();
 		this
 			.snd(m.PROTOCOL.GMCP_START)
@@ -188,7 +188,7 @@ module.exports = {
 		
 		if (d.search(/[^\x00-\x7f]/) != -1) {
 			
-			log('unsupported protocol: ' + d.split('').map(function(i) { 
+			log('unsupported char range: ' + d.split('').map(function(i) { 
 				var n = i.charCodeAt(0); 
 				return my().PROTOCOL[n] || i; 
 			}).join(', '), this);

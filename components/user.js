@@ -204,7 +204,10 @@ module.exports = {
 		.snd(m.PROTOCOL.WILL_GMCP)
 		.snd(m.PROTOCOL.GO_MXP);
 
-		after(3, function() {
+		info('portal client assumed', s);
+		s.portal = 1; /* for now, let's assume portal client */
+
+		after(2, function() {
 			if (!s.user) {
 				s.snd(m.LOGIN_SCREEN);
 				user.userPrompt(s);
@@ -288,8 +291,10 @@ module.exports = {
 		}
 				
 		if (!user.validName(s.username, 'user')) {
+			
 			if (cb)
 				return cb(-1);
+			
 			user.userPrompt(s, my().INVALID_NAME);
 			return;
 		}
@@ -306,7 +311,7 @@ module.exports = {
 			
 			if (r) {
 				
-				if (s.portal && !s.gui)
+				if (s.portal)
 					return user.userPrompt(s, m.USER_EXISTS_INFO);
 				
 				s.snd(m.PROTOCOL.WILL_ECHO).snd(m.USER_EXISTS);
@@ -430,7 +435,6 @@ module.exports = {
 			s.snd(u.format(my().PASS_GET_FOR_X, s.username));
 		
 		s.next = user.passGet;
-		return;
 	},
 
 	passGet: function(s, d) {
@@ -450,12 +454,7 @@ module.exports = {
 
 		if (!d)
 			return user.userPrompt(s);
-		
-		if (!s.username) {
-			error('user.passConfirm: no desired username found on socket!');
-			return server.closeSocket(s);
-		}
-		
+
 		if (s.password != d)
 			return user.userPrompt(s, my().PASSWORDS_DIFFER);
 		
@@ -514,7 +513,7 @@ module.exports = {
 			attr: { 
 				pref: {}, 
 				fb: s.fb, 
-				role: my().userindex.length ? 'player' : 'imp' 
+				role: 'player'
 			},
 			points: { 
 				gold: 0, 
@@ -522,10 +521,21 @@ module.exports = {
 				karma: 0 
 			}
 		})
-		.success(function() {
+		.success(function(usr) {
+			
 			user.emit('create', s);
+			
+			s.user = usr;
+			user.initUser(s);
+			
+			if (usr.id == 1) {
+				usr.setAttr({
+					role: 'imp'
+				});
+			}
+			
 			delete s.next, delete s.username;
-			user.password(s, d);
+			user.lobby(s);
 		});
 	},
 			

@@ -4,17 +4,18 @@ var events = require('events');
 var u = require('util');
 
 log = function(msg, s) {
-	var t = (new Date()).toString().substr(0, 24).color('&K');
+	var t = (new Date()).toString();
+	t = (t.substr(0, 11) + t.substr(16, 8)).color('&K');
 	if (s) {
 		msg = u.format(
 			t + ' %s %s',
 			(s.user ? (s.ch ? (s.user.name + ' / ' + s.ch.name) : s.user.name) : s.remoteAddress) + ': ', 
 			msg
 		);
-		console.log(ansi(msg, true));
+		console.log(msg.colorize());
 	}
 	else
-		console.log(t + ' %s', ansi(msg, true));
+		console.log((t + ' ' + msg).colorize());
 };
 
 info = function(msg, s) {
@@ -33,8 +34,14 @@ warning = function(msg, s) {
 	return log('warning: '.color('&y') + msg, s); 
 };
 
+/* this enables us to serve localized strings if it's run 
+ * in the context of user or char with lang preferences */
+my = function() {
+	return this.lang ? global['strings.'+this.lang] : global['strings.'+config.server.language];
+};
+
 ansi = function(str, color) {
-	
+
 	if (/(&[a-zA-Z])/.test(str)) {
 		for (var c in my().ANSI) {
 			var re = new RegExp(c, 'g');
@@ -97,11 +104,6 @@ merge = function(a, b) {
 
 by_name = function(a, b) { return a.name > b.name; };
 
-/* this enables us to serve localized strings if it's run 
- * in the context of user or char with lang preferences */
-my = function() {
-	return this.lang?global['strings.'+this.lang]:global['strings.'+config.server.language];
-};
 
 addStrings = function(o) {
 	for (var lang in o) {
@@ -303,6 +305,8 @@ String.prototype.nocolor = function(a) { return ansi(this.replace(/\&[0-9]+/, ''
 String.prototype.nolf = function(a) { return this.replace(/[\r\n]/g, ' '); };
 
 String.prototype.colorize = function() { return ansi(this, true); };
+
+String.prototype.ellipse = function(n) { return (this.length > n - 3) ? this.substr(0, n) + '...' : this; };
 
 /* MXP begin */
 

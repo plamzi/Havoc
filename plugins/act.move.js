@@ -60,7 +60,7 @@ module.exports = {
 		
 		var ch = this, from = ch.at, p = world.getPortals(ch.at);
 
-		if (!p.length)
+		if (!p || !p.length)
 			return ch.send(my().NO_ENTRANCE);
 
 		p = p.filter(function(i) { return i.id == arg[0]; })[0];

@@ -94,6 +94,10 @@ module.exports = {
 				return;
 			}
 		});
+		
+		user.register('user.basic', 'do.portal', function(s) {
+			s.sendGMCP('game.info', config.game);
+		});
 	},
 	
 	immo: function() {

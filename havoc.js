@@ -40,7 +40,7 @@ havoc = {
 	
 	init: function() { /* should be called only on engine boot-up */
 		
-		log('havoc engine init');
+		console.log('havoc engine init');
 
 		this.loadLanguages();
 		this.loadComponents();
@@ -80,10 +80,11 @@ havoc = {
 	},
 	
 	loadLanguages: function() {
-		log('detected language files: ' + this.languages.join(', '));
 		
 		for (var i in this.languages)
-			this.loadLanguage(this.languages[i]);		
+			this.loadLanguage(this.languages[i]);
+
+		console.log('detected & loaded language files: ' + this.languages.join(', '));
 	},
 	
 	loadLanguage: function(a) {

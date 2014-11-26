@@ -28,6 +28,8 @@ config = {
 			y: 29
 		},
 		allowMultipleUserConnections: false, /* can users with the player role have more than one connection at the same time? */
-		allowMultipleCharacters: false /* can users have more than one character in game at the same time? */
+		allowMultipleCharacters: false, /* can users have more than one character in game at the same time? */
+		fbAppId: '', /* Facebook app id: adds support for "Login via Facebook" */
+		havoc: 0.3
 	}
 };
