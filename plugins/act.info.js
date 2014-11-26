@@ -128,8 +128,9 @@ module.exports = {
 			}
 			
 			if (d.gui) {
-				s.gui = d.gui;
+				s.portal = s.gui = d.gui;
 				info('portal GUI client detected', s);
+				user.emit('do.portal', s);
 				user.emit('do.gui', s);
 			}
 			

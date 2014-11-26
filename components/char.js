@@ -278,7 +278,7 @@ module.exports = {
 	createChar: function(s) {
 		
 		debug('char.createChar');
-		
+
 		Char.create({
 			name: s.create.name,
 			class: s.create.cls,
@@ -287,8 +287,9 @@ module.exports = {
 			level: 1,
 			attr: { aff: {}, bg: s.create.bg || 'none', pref: {} },
 			points: char_points_default,
+			at: config.game.start,
 			UserId: s.user.id,
-			at: config.game.start
+			GuildId: s.user.attr.guild ? s.user.attr.guild.id : null
 		})
 		.success(function(ch) {
 		

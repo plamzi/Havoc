@@ -41,7 +41,7 @@ addStrings({
 		TOKEN_INFO:			"Check your linked email address for a reset token email.",
 		TOKEN_INVALID:		"Invalid token. Please try again.",
 		
-		CREATE_NEW_PASSWORD:	"Create New Password:",
+		CREATE_NEW_PASSWORD: my().U_LOCK + " Create New Password:",
 		CHANGE_PASSWORD:	"Enter a new password (or " + "cancel".mxpsend('') + "): ",
 		YOU_CHANGED_PASSWORD: 	"You changed your password successfully",
 		PASSWORD_INFO:		"Your password needs to be at least 6 characters long.",
@@ -55,7 +55,7 @@ addStrings({
 		PASS_GET_FOR_X:		"Give me a password for user '%s': ",
 		PASS_CONFIRM:		"Retype the password for this user: ",
 		EXPLAIN_EMAIL:		"\r\nAn email address enables password resets and offline notifications for which you have to opt in explicitly.\r\nWe'll never send you unsolicited email.",
-		PROMPT_EMAIL:		"Enter email address: ",
+		PROMPT_EMAIL:		my().U_ENVELOPE + " Enter email address: ",
 		EMAIL_PLACEHOLDER:	"email address",
 		
 		OPT_OUT_EMAIL:		" opt out ".mxpsend(''),
@@ -204,8 +204,7 @@ module.exports = {
 		.snd(m.PROTOCOL.WILL_GMCP)
 		.snd(m.PROTOCOL.GO_MXP);
 
-		after(2, function() {
-			
+		after(3, function() {
 			if (!s.user) {
 				s.snd(m.LOGIN_SCREEN);
 				user.userPrompt(s);
@@ -219,7 +218,7 @@ module.exports = {
 		
 		debug('userPrompt');
 		
-		if (s.portal && !s.gui)
+		if (s.portal)
 			s.sendGMCP('LoginPrompt', {
 				title: my().USERNAME_PROMPT,
 		        placeholder: my().USERNAME_PLACEHOLDER,

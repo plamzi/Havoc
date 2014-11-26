@@ -394,8 +394,10 @@ module.exports = {
 				if (!q || !q.ItemProtoId || q.ItemProtoId != it.ItemProtoId)
 					continue;
 				
-				ch.snd('<FRAME Name="scroll-view">'.mxp());
-				ch.send((my().U_BOOK + ' ' + q.name).mxpsend('read ' + it.id + ' ' + q.id) + ' ').send(q.desc.color('&Ki'), 'scroll-view');
+				//ch.snd('<FRAME Name="scroll-view">'.mxp());
+				ch
+				.send((my().U_BOOK + ' ' + q.name).mxpsend('read ' + it.id + ' ' + q.id) + ' ')
+				.send(q.desc.color('&Ki'));
 			};
 			return;
 		}

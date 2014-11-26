@@ -275,7 +275,7 @@ module.exports = {
 		Guild.find({
 			where: { name: name }
 		})
-		.success(function(r) {
+		.then(function(r) {
 			
 			if (!r)
 				return ch.send(u.format(my().GUILD_X_NOT_FOUND, name));
@@ -290,7 +290,7 @@ module.exports = {
 							type: "guild.invite" 
 						}
 					})
-					.success(function(r) {
+					.then(function(r) {
 						for (var i in r)
 							r[i].destroy();
 					});
@@ -556,7 +556,7 @@ module.exports = {
 			var ss = my().sockets;
 			for (var i in ss)
 				if (ss[i].ch && ch.isGuildiesWith(ss[i].ch))
-					ss[i].ch.getGuild().success(function(r) {
+					ss[i].ch.getGuild().then(function(r) {
 						ss[i].ch.guild = r;
 						act.initChar(ss[i].ch);
 					});
@@ -584,7 +584,7 @@ module.exports = {
 				order: 'createdAt DESC', 
 				limit: n 
 			})
-			.success(function(r) {
+			.then(function(r) {
 			
 				if (!r)
 					return ch.send(u.format(my().NO_RECENT_X_TO_SHOW, 'guild chatter'));
@@ -637,7 +637,7 @@ module.exports = {
 			order: 'createdAt DESC', 
 			limit: n 
 		})
-		.success(function(r) {
+		.then(function(r) {
 		
 			if (!r)
 				return ch.send(u.format(my().NO_RECENT_X_TO_SHOW, 'guild news'));

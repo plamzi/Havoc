@@ -10,6 +10,7 @@ addStrings({
 		SAY_USAGE:				"Usage: say message.",
 		TELL_USAGE:				"Usage: tell (char_name | user_id) something | tell 1-100 (for tell log)",
 		PM_USAGE:				"Usage: pm (char_name | user_id)",
+		PRIVATE_MESSAGE_TO_:	"Private message to ",
 		PM_BEGIN_MESSAGE_TO_X:	"Private message to %s. Enter /s on a line by itself to send.",
 		PM_ABORTED:				"Private message aborted.",
 		PM_SENT:				"Private message sent.",
@@ -272,7 +273,7 @@ module.exports = {
 		
 		for (var i = 0; i < s.length; i++)
 			if (s[i].ch)
-				s[i].send(format(ch, s[i], msg), 'chat');
+				s[i].ch.send(format(ch, s[i], msg), 'chat');
 		
 		ch.emit('speech', 'gossip', msg);
 	},
@@ -371,7 +372,7 @@ module.exports = {
 				ch.send(u.format(my().PM_BEGIN_MESSAGE_X, usr.name));
 			else
 				ch.sendGMCP('ModalInput', {
-					title: 'Private Message for ' + usr.name,
+					title: my().PRIVATE_MESSAGE_TO_ + usr.name,
 					after: '\r\n/s',
 					abort: '/a'
 				});

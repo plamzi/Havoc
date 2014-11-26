@@ -16,12 +16,12 @@ http://www.cloudgamer.org/images/Havoc3.png
 
 <b>Live Demos:</b>
 
-http://www.cloudgamer.org/play?host=aaralon.com&havoc=1
+http://www.aaralon.com/text
 
 (mostly text, very close to what you will get out-of-the-box)
 
 
-http://www.aaralon.com 
+http://www.aaralon.com
 
 (graphics, requires a Facebook account or existing user at this time, in progress so not fully playable yet)
 

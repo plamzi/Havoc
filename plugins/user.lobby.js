@@ -14,12 +14,16 @@ addStrings({
 		
 		PROMPT_CHAR:		'Create new character'.mxpsend('new') + " or click on existing character name.",
 		CREATE_NEW:			'Create New',
-		LOBBY:				"Lobby:",
+		LOBBY:				my().U_HOME + " Lobby:",
 		RETURN_TO_LOBBY:	"Back to lobby",
 		
 		PASSWORD_NOT_CHANGED: "Password was not changed.",
 		PASSWORDS_DIFFER:	"Passwords did not match so it was not changed.",
 		PASSWORD_CHANGED: 	"You have successfully changed your password.",
+		
+		INBOX:				my().U_INBOX + " Inbox",
+		INBOX_EMPTY:		"Birds are nesting in your  empty inbox... " + my().U_BIRD,
+		
 		PROMPT_NEW_CHAR:	"Name your new character:",
 		HEROIC_NAME_LIKE_:	"a heroic name like ",
 		CANCEL:				"Cancel",
@@ -31,11 +35,11 @@ addStrings({
 		CHAR_INVALID:		"Invalid character name. Please try another: ",
 		CREATION_ERROR: 	'Creation error:',
 		INVALID_CHARNAME: 	'Invalid character name. Try something more heroic.',
-		CREATION_ABORTED: 	'Character creation was cancelled.',
+		CREATION_ABORTED: 	'Character creation was aborted.',
 		MALE:				"Male",
-		MALE_INFO:			"Ale-chugging, back-slapping brutes with nary a care.",
+		MALE_INFO:			"Ale-chugging, back-slapping brutes with nary a care (nor a clue).",
 		FEMALE:				"Female",
-		FEMALE_INFO:		"Style-packing, head-turning damsels sans distress.",
+		FEMALE_INFO:		"Head-turning damsels sans distress (except the one they cause).",
 		BACK:				("B".font('color=white') + "ack").mxpsend('back') + ' ',
 		SELECT_SEX:			" Select sex: ",
 		SELECT_CLASS:		" Select class: ",
@@ -50,7 +54,7 @@ addStrings({
 		CREATE_CONFIRM:		" Create %s, a %s %s with a %s past? ",
 		YOU_SELECTED: 		"You selected",
 		YES_NO:				("Y".font('color=white') + "es").mxpsend('yes') + ' ' + ("N".font('color=white') + "o").mxpsend('no') + ' ',
-		YOUR_PREFERENCES: 	"Notification Options:",
+		YOUR_PREFERENCES: 	my().U_GEAR + " Preferences:",
 		USER_PREFERENCES:	[
 		            		 ['Forward Private Messages', 'Forward any private messages immediately to your email address (if supplied).'],
 		            		 ['Daily Summary Email', 'Once daily, send an email with in-game updates such as guild news and activities, private messages, etc.'],
@@ -92,7 +96,7 @@ module.exports = {
 		
 		msg = m.U_GEAR.style(16, '&178').mxpsend('pref', 'Manage your user account preferences.') + ' ' 
 			+ user.displayName(s.user).mxpsend('password', 'Click to set or change your account password.').style(12, '&Ki') + ' ' 
-			+ m.U_ENVELOPE.style(16, '&178') + ' ' 
+			+ m.U_ENVELOPE.style(16, '&178').mxpsend('inbox', 'Check your message inbox.') + ' ' 
 			+ (s.user.email.length ? s.user.email : 'no email').mxpsend('email', 'Set up or change your email address.').style(12, '&Ki') + '\r\n';
 	
 		for (var i in s.user.chars) {
@@ -113,6 +117,7 @@ module.exports = {
 				info: err,
 				mxp: msg.replace(/\r\n/g, '\x1b<br\x1b>').colorize(),
 				closeable: 0,
+				backdrop: 'static',
 				buttons: [{
 					text: my().CREATE_NEW,
 					send: 'new'
@@ -143,6 +148,9 @@ module.exports = {
 		
 		if (d == 'pref')
 			return user.showPrefs(s);
+		
+		if (d == 'inbox')
+			return user.showInbox(s, 'start');
 		
 		return user.selectChar(s, d);
 	},
@@ -265,7 +273,7 @@ module.exports = {
 			msg += ((s.user.attr.pref[i[0]] ? m.CHECKED : m.UNCHECKED) + ' ' + i[0]).mxpsend(i[0], i[1]) + '\r\n';
 		});
 		
-		msg += '\r\n' + m.RETURN_TO_LOBBY.mxpsend();
+		msg += '\r\n' + m.RETURN_TO_LOBBY.mxpsend('');
 		
 		if (!s.portal)
 			s.snd('\r\n' + m.YOUR_PREFERENCES.color('&178') + msg);
@@ -300,6 +308,45 @@ module.exports = {
 			user.showPrefs(s);
 		});
 	},
+	
+	showInbox: function(s, d) {
+
+		debug('user.showInbox');
+		
+		if (!d)
+			return user.lobby(s);
+		
+		var m = my(), msg = '';
+		
+		Message.findAll({
+			where: { to_id: s.user.id }
+		})
+		.then(function(r) {
+			
+			if (!r)
+				msg = m.INBOX_EMPTY;
+			
+			r.forEach(function(i) {
+				msg += i.from + ': ' + i.text.nolf().ellipse(30).mxpsend('read ' + i.id, i.text) + ' ' 
+					+ i.createdAt.toUTCString().substring(0, 11).replace(',','').style(11, '&Ki') + '\r\n';
+			});
+			
+			msg += '\r\n' + m.RETURN_TO_LOBBY.mxpsend('');
+			
+			if (!s.portal)
+				s.snd('\r\n' + m.U_HUMAN.color('&178') + s.user.displayName() + ' ' + m.INBOX + msg);
+			else
+				s.sendGMCP('Modal', {
+					title: m.INBOX,
+					mxp: msg.replace(/\r\n/g, '\x1b<br\x1b>').colorize(),
+					buttons: []
+				});
+		});
+
+		s.next = user.showInbox;
+	},
+	
+	/* begin char create steps */
 	
 	charPromptClass: function(s, d) {
 
@@ -441,7 +488,7 @@ module.exports = {
 					text: user.genCharname(),
 					tag: 'input',
 					type: 'text',
-					abort: 'chars',
+					abort: '',
 					buttons: [
 					    { text: my().CANCEL, send: '' },
 					    { text: my().SUGGEST, send: 'start' },
