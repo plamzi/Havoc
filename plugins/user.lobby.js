@@ -15,7 +15,7 @@ addStrings({
 		PROMPT_CHAR:		'Create new character'.mxpsend('new') + " or click on existing character name.",
 		CREATE_NEW:			'Create New',
 		LOBBY:				my().U_HOME + " Lobby:",
-		RETURN_TO_LOBBY:	"Back to lobby",
+		RETURN_TO_LOBBY:	my().U_HOME + " Back to lobby",
 		
 		PASSWORD_NOT_CHANGED: "Password was not changed.",
 		PASSWORDS_DIFFER:	"Passwords did not match so it was not changed.",
@@ -23,6 +23,9 @@ addStrings({
 		
 		INBOX:				my().U_INBOX + " Inbox",
 		INBOX_EMPTY:		"Birds are nesting in your  empty inbox... " + my().U_BIRD,
+		FROM_X:				"From %s:",
+		RETURN_TO_INBOX:	my().U_INBOX + " Back to inbox",
+		YOUR_PRIVATE_MESSAGE_WAS_SENT:	"Your private message was sent. If the user has enabled forwarding, it will be emailed to them.",
 		
 		PROMPT_NEW_CHAR:	"Name your new character:",
 		HEROIC_NAME_LIKE_:	"a heroic name like ",
@@ -63,6 +66,34 @@ addStrings({
 	}
 });
 
+/* private function handling pm from lobby inbox */
+
+var pm = function(s, d) {
+
+	//s.send(my().YOUR_PRIVATE_MESSAGE_WAS_SENT);	
+	if (!d || d == '/a')
+		return user.showInbox(s, my().PM_ABORTED);
+
+	Message.create(s.pm).success(function() {
+		
+		var usr = my().userindex[s.pm.to_id];
+		
+		if (usr && usr.attr.pref['Forward Private Messages'] && usr.email && usr.email.has('@')) {
+
+			user.sendMail({ 
+				from: s.pm.from + " <noreply@aaralon.com>",
+				to: usr.email,
+				subject: config.game.name + ': New Private Message',
+				text: d
+			},
+			function(e, r) { dump(e || r); });
+		}
+		
+		delete(s.pm);
+		user.showInbox(s, my().PM_SENT);
+	});
+}
+
 module.exports = {
 	
 	init: function(re) {
@@ -94,14 +125,14 @@ module.exports = {
 		if (err && !s.portal)
 			s.send(err);
 		
-		msg = m.U_GEAR.style(16, '&178').mxpsend('pref', 'Manage your user account preferences.') + ' ' 
-			+ user.displayName(s.user).mxpsend('password', 'Click to set or change your account password.').style(12, '&Ki') + ' ' 
-			+ m.U_ENVELOPE.style(16, '&178').mxpsend('inbox', 'Check your message inbox.') + ' ' 
-			+ (s.user.email.length ? s.user.email : 'no email').mxpsend('email', 'Set up or change your email address.').style(12, '&Ki') + '\r\n';
+		msg = m.U_GEAR.style(16, '&178').mxpsend('pref', 'Manage your user account preferences.') + '   ' 
+			+ s.user.displayName().mxpsend('password', 'Click to set or change your account password.').style(16, '&Ki') + '   ' 
+			+ (m.U_INBOX.style(16, '&178') + ' inbox').mxpsend('inbox', 'Check your message inbox.').style(16, '&Ki') + '   ' 
+			+ (m.U_ENVELOPE.style(16, '&178') + ' ' + (s.user.email.length ? s.user.email : 'no email')).mxpsend('email', 'Set up or change your email address.').style(16, '&Ki') + '\r\n';
 	
 		for (var i in s.user.chars) {
 			var a = s.user.chars[i];
-			var c = m.U_PAWN.style(16, '&B') + ' '
+			var c = m.U_HUMAN.style(16, '&B') + ' '
 				+ a.name.mxpsend(a.name) + ' ' 
 				+ m.U_STAR.color('&208') + ' ' 
 				+ a.level + ' ' + m.SEX[a.sex].symbol + ' ' 
@@ -134,7 +165,7 @@ module.exports = {
 		
 		debug('user.lobbyAction: ' + stringify(d));
 		
-		if (!d || !d.length || d == 'chars')
+		if (!d || !d.length || d == 'lobby')
 			return user.lobby(s);
 		
 		if (d == 'new')
@@ -313,7 +344,7 @@ module.exports = {
 
 		debug('user.showInbox');
 		
-		if (!d)
+		if (!d || d == 'lobby')
 			return user.lobby(s);
 		
 		var m = my(), msg = '';
@@ -323,11 +354,13 @@ module.exports = {
 		})
 		.then(function(r) {
 			
+			s.user.inbox = r;
+			
 			if (!r)
 				msg = m.INBOX_EMPTY;
 			
 			r.forEach(function(i) {
-				msg += i.from + ': ' + i.text.nolf().ellipse(30).mxpsend('read ' + i.id, i.text) + ' ' 
+				msg += m.U_PENCIL.mxpsend('pm ' + i.from_id) + ' ' + i.from + ': ' + i.text.nolf().ellipse(30).mxpsend('read ' + i.id, i.text) + ' ' 
 					+ i.createdAt.toUTCString().substring(0, 11).replace(',','').style(11, '&Ki') + '\r\n';
 			});
 			
@@ -338,12 +371,73 @@ module.exports = {
 			else
 				s.sendGMCP('Modal', {
 					title: m.INBOX,
+					info: d != 'start' ? d : null,
 					mxp: msg.replace(/\r\n/g, '\x1b<br\x1b>').colorize(),
+					abort: 'lobby',
 					buttons: []
 				});
 		});
 
-		s.next = user.showInbox;
+		s.next = user.inboxAction;
+	},
+	
+	inboxAction: function(s, d) {
+
+		debug('user.inboxAction');
+		
+		if (!d)
+			return user.lobby(s);
+		
+		arg = d.split(' ');
+		
+		if (arg[0] == 'lobby')
+			return user.lobby(s);
+		
+		if (arg[0] == 'inbox')
+			return user.showInbox(s, 'start');
+		
+		if (arg[0] == 'read' && arg[1] && arg[1].isnum()) {
+			 
+			var msg = s.user.inbox.filter(function(i) { return i.id == arg[1]; });
+			 
+			 if (!msg[0])
+				 return;
+			
+			msg = msg[0].text + '\r\n\r\n' + my().RETURN_TO_LOBBY.mxpsend('') + '  |  ' + my().RETURN_TO_INBOX.mxpsend('inbox');
+			
+			s.sendGMCP('Modal', {
+				title: u.format(my().FROM_X, msg[0].from),
+				mxp: msg.replace(/\r\n/g, '\x1b<br\x1b>').colorize(),
+				abort: 'inbox',
+				closeable: 1,
+				buttons: []
+			});
+		}
+		
+		if (arg[0] == 'pm' && arg[1] && arg[1].isnum()) {
+
+			var usr = my().userindex[arg[1]];
+			
+			if (!usr)
+				return warning('lobby inbox pm invalid userid');
+			
+			s.pm = {
+				type: 'pm',
+				from: s.user.displayName(),
+				from_id: s.user.id,
+				to: usr.name,
+				to_id: usr.id,
+				text: ''
+			};
+	
+			s.sendGMCP('ModalInput', {
+				title: my().PRIVATE_MESSAGE_TO_ + usr.name,
+				after: '\r\n/s',
+				abort: '/a'
+			});
+			
+			s.next = pm;
+		}
 	},
 	
 	/* begin char create steps */
@@ -354,13 +448,13 @@ module.exports = {
 		
 		var m = my(), cls = m.classes, names = cls.map(function(i) { return i.name; }), msg = '';
 		
-		if (!d) {
+		if (!d || d == 'lobby') {
 			delete s.create;
 			return user.lobby(s, m.CREATION_ABORTED);
 		}
 		
 		if (d != 'start') {
-			
+
 			if (d == 'next')
 				return user.createChar(s);
 			
@@ -382,6 +476,7 @@ module.exports = {
 			s.sendGMCP('Modal', {
 				title: m.SELECT_CLASS,
 				mxp: msg.replace(/\r\n/g, '\x1b<br\x1b>').colorize(),
+				abort: 'lobby',
 				buttons: []
 			});
 	},
@@ -392,7 +487,7 @@ module.exports = {
 		
 		var m = my(), msg = '';
 		
-		if (!d) {
+		if (!d || d == 'lobby') {
 			delete s.create;
 			return user.lobby(s, m.CREATION_ABORTED);
 		}
@@ -419,6 +514,7 @@ module.exports = {
 			s.sendGMCP('Modal', {
 				title: m.SELECT_SEX,
 				mxp: msg.replace(/\r\n/g, '\x1b<br\x1b>').colorize(),
+				abort: 'lobby',
 				buttons: []
 			});
 	},
@@ -429,7 +525,7 @@ module.exports = {
 		
 		var m = my(), bg = m.CHAR_BACKGROUNDS, msg = '';
 		
-		if (!d) {
+		if (!d || d == 'lobby') {
 			delete s.create;
 			return user.lobby(s, m.CREATION_ABORTED);
 		}
@@ -459,6 +555,7 @@ module.exports = {
 			s.sendGMCP('Modal', {
 				title: m.SELECT_BACKGROUND,
 				mxp: msg.replace(/\r\n/g, '\x1b<br\x1b>').colorize(),
+				abort: 'lobby',
 				buttons: []
 			});
 	},
@@ -467,7 +564,7 @@ module.exports = {
 		
 		debug('user.charPromptName');
 		
-		if (!d) {
+		if (!d || d == 'lobby') {
 			delete s.create;
 			return user.lobby(s, m.CREATION_ABORTED);
 		}
@@ -488,7 +585,7 @@ module.exports = {
 					text: user.genCharname(),
 					tag: 'input',
 					type: 'text',
-					abort: '',
+					abort: 'lobby',
 					buttons: [
 					    { text: my().CANCEL, send: '' },
 					    { text: my().SUGGEST, send: 'start' },

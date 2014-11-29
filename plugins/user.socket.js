@@ -20,8 +20,9 @@ module.exports = {
 	
 	do: function(d) {
 		
-		log('got: |' + d + '|', s);
 		var s = this, cmd;
+
+		log('got: |' + d + '|', s);
 		
 		if (d && d.length) /* normalize CR LF */
 			d = d.replace(/(\r\n|\n\r)/gi, '\n').replace(/\n/gi, '\r\n');

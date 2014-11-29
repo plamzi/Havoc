@@ -33,9 +33,9 @@ module.exports = {
 				
 				s.create = { 
 					name: d.name.cap(), 
-					cls: d.cls.cap(), 
+					cls: d.cls.cap(),
 					sex: d.sex.toLowerCase(), 
-					bg: bg.toLowerCase()
+					bg: d.bg.toLowerCase()
 				};
 				
 				return user.emit('create.pc', s);
@@ -110,6 +110,8 @@ module.exports = {
 	
 	/* we will scan all known user info for something to show as a username */
 	displayName: function() {
+		
+		var u = this;
 		
 		if (!u.name.isnum())
 			return u.name;

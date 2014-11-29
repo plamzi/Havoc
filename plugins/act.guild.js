@@ -80,6 +80,18 @@ addStrings({
 		GUILD_VALID_RANKS_ARE_X:	"The rank has to be one of: ",
 		
 		GUILD_X_NEW_RANK_IS_Y:		"%s's new guild rank is '%s'.",
+		
+		GUILD_NAMED_X_EXISTS:		"A guild with the name '%s' already exists. Try a different name",
+
+		X_IS_NOT_IN_A_GUILD:		"%s is not a member of any guild.",
+		
+		GUILD_YOU_CREATED_X: 		"Congratulations! You have founded '%s'.",
+		
+		GUILD_IS_X:					"This guild is currently %s.",
+		
+		GUILD_INFO:					"Guild Info:",
+		
+		GUILD_YOU_ARE_NOT_IN_ONE:	"You are not a member of any guild: " + "join guild".mxpsend('guild join') + '  ' + "create guild".mxpsend('guild create')
 	}
  
 });
@@ -151,7 +163,8 @@ module.exports = {
 		if (this.guild)
 			return this.do('guild stat');
 
-		this.do('help guild');
+		this.send(my().GUILD_INFO + '\r\n\r\n' + my().GUILD_YOU_ARE_NOT_IN_ONE, 'Modal');
+		//this.do('help guild');
 	},
 	
 	'guild create': function(arg) {

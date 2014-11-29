@@ -104,11 +104,12 @@ var pm = function(cmd) {
 		
 		if (!ch.portal)
 			ch.send(my().PM_ABORTED);
+		
 		return my().HANDLED;
 	}
 	
 	if (cmd == '/s') { //debug('act.social: pm send');
-		
+
 		Message.create(ch.pm).success(function() {
 			
 			ch.send(my().PM_SENT);
@@ -221,7 +222,7 @@ module.exports = {
 		
 		char.register('act.social', 'enter.pc', function(ch) {
 			ch.snd('<FRAME Name="chat" Parent="ChatterBox">'.mxp());		
-			ch.do('gossip 10');		
+			ch.do('gossip 20');		
 		});
 	},
 
@@ -344,7 +345,7 @@ module.exports = {
 		to.send(u.format("%s: &n%s".color('&r'), ch.name, msg), 'chat');
 	},
 	
-	pm: function(arg) {
+	pm: function(arg, complete) {
 		
 		var ch = this;
 		
@@ -365,20 +366,21 @@ module.exports = {
 				from_id: ch.user.id,
 				to: usr.name,
 				to_id: usr.id,
-				text: ''
+				text: '',
+				complete: complete
 			};
 			
-			if (!ch.s.portal)
-				ch.send(u.format(my().PM_BEGIN_MESSAGE_X, usr.name));
-			else
+			if (ch.s && ch.s.portal)
 				ch.sendGMCP('ModalInput', {
 					title: my().PRIVATE_MESSAGE_TO_ + usr.name,
 					after: '\r\n/s',
 					abort: '/a'
 				});
+			else
+				ch.send(u.format(my().PM_BEGIN_MESSAGE_X, usr.name));
 		}
 		
-		/* support for pm charname */
+		/* support for pm charname? */
 	}
 };
 	

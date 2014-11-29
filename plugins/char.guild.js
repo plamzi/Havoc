@@ -5,12 +5,7 @@ var Seq = require('sequelize');
 
 addStrings({
 	eng: {
-		
-		GUILD_NAMED_X_EXISTS:		"A guild with the name '%s' already exists. Try a different name",
 
-		GUILD_YOU_CREATED_X: 		"Congratulations! You have founded '%s'.",
-		
-		GUILD_IS_X:					"This guild is currently %s."
 	}
 });
 
@@ -241,9 +236,15 @@ module.exports = {
 		if (!vict)
 			vict = ch;
 		
-		if (!vict.guild)
+		if (!vict.guild) {
+			if (vict == ch)
+				ch.snd(m.GUILD_YOU_ARE_NOT_IN_ONE);
+			else
+				ch.snd(u.format(m.X_IS_NOT_IN_A_GUILD, vict.name));
 			return;
-	
+		
+		}
+		
 		ch.send(vict.guild.name.style('guild'));
 		ch.send(vict.guild.motto.style('info'));
 		ch.send(('Members: ' + ch.guild.members).mxpsend('guild members'));

@@ -272,6 +272,14 @@ Running &WAlpha&n &YHavoc &y(c)&n custom game engine &Wv0.3&n\r\n\
 	U_PEACH:			"\uD83C\uDF51",
 	U_BOTTLECUP:		"\uD83C\uDF76",
 	U_VOLCANO:			"\uD83C\uDF0B",
+	U_MALE:				"\u2642",
+	U_FEMALE:			"\u2640",
+	U_NEUTRAL:			"\u26A5",
+	U_BIRD:				"\uD83D\uDC26",
+	U_LOCK:				"\uD83D\uDD12",
+	U_INBOX:			"\uD83D\uDCEA",
+	U_HOME:				"\uD83C\uDFE0",
+	U_PENCIL:			"\u270E",
 	
 	/* nice spell runes at U 0800 - 0815 */
 	

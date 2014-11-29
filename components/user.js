@@ -528,11 +528,8 @@ module.exports = {
 			s.user = usr;
 			user.initUser(s);
 			
-			if (usr.id == 1) {
-				usr.setAttr({
-					role: 'imp'
-				});
-			}
+			if (usr.id == 1)
+				usr.setAttr({ role: 'imp' });
 			
 			delete s.next, delete s.username;
 			user.lobby(s);

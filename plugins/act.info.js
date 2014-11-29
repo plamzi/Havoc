@@ -357,7 +357,7 @@ module.exports = {
 
 	stat: function(arg) {
 		
-		var ch = this;
+		var ch = this, vict;
 		
 		var _stat = function(ch, vict) {
 			
@@ -389,20 +389,19 @@ module.exports = {
 			ch.snd('</DEST>'.mxp());
 		};
 		
-		if (arg) {
-			
-			var vict = ch.findActor(arg.join(' '), 'atvis');
-			
-			if (!vict && ch.imp())
-				vict = ch.findActor(arg[0], 'world');
-			
-			if (vict)
-				_stat(ch, vict);
-			else
-				ch.send(my().NOONE_BY_THAT_NAME);
-		}
-		else
-			_stat(ch, ch);
+		if (!arg)
+			return _stat(ch, ch); 
+		
+		if (arg[0].isnum())
+			vict = my().charindex[arg[0]]; 
+		
+		if (!vict)
+			vict = ch.findActor(arg.join(' '), 'at-vis');
+
+		if (!vict && ch.imp())
+			vict = ch.findActor(arg[0], 'world');
+		
+		_stat(ch, vict);
 	},
 
 	identify: function(arg, mode) {
