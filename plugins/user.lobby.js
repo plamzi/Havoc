@@ -70,17 +70,18 @@ addStrings({
 
 var pm = function(s, d) {
 
-	//s.send(my().YOUR_PRIVATE_MESSAGE_WAS_SENT);	
 	if (!d || d == '/a')
 		return user.showInbox(s, my().PM_ABORTED);
-
+	
+	s.pm.text = d;
+	
 	Message.create(s.pm).success(function() {
 		
 		var usr = my().userindex[s.pm.to_id];
 		
 		if (usr && usr.attr.pref['Forward Private Messages'] && usr.email && usr.email.has('@')) {
 
-			user.sendMail({ 
+			user.sendMail({
 				from: s.pm.from + " <noreply@aaralon.com>",
 				to: usr.email,
 				subject: config.game.name + ': New Private Message',
@@ -90,7 +91,7 @@ var pm = function(s, d) {
 		}
 		
 		delete(s.pm);
-		user.showInbox(s, my().PM_SENT);
+		user.showInbox(s, my().YOUR_PRIVATE_MESSAGE_WAS_SENT);
 	});
 }
 

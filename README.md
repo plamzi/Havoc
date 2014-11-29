@@ -2,7 +2,9 @@ Havoc Web-Based Game Engine
 ===========================
 v0.3 :: Alpha :: Unstable
 
-Havoc is an open source multiplayer RPG game engine in node.js especially suited for realtime social web-based multiplayer games with a lot of interactive rich text. It does not include a physics or particle engine--it comes bundled with a hexagonal world map in which any number of entities can occupy the same hex (maps are linked via portals).
+Havoc is an open source multiplayer RPG game engine in node.js especially suited for realtime social web-based multiplayer games with a lot of interactive rich text. It is geared towards small teams of enthusiasts who wish to create full-featured worlds under severe budget limitations and with minimal graphical assets. 
+
+The bundled components aim to handle all common user actions and interactions, with an emphasis on competitive player factions. Havoc does not include a physics or particle engine--it comes bundled with a hexagonal world map in which any number of entities can occupy the same hex (maps are linked via portals). 
 
 
 <b>Screenshots:</b>
@@ -18,7 +20,7 @@ http://www.cloudgamer.org/images/Havoc3.png
 
 http://www.aaralon.com/text
 
-(mostly text, very close to what you will get out-of-the-box)
+(mostly text, very close to what you will get out of the box)
 
 
 http://www.aaralon.com
@@ -68,7 +70,12 @@ git clone https://github.com/plamzi/Havoc
         port:			3306
     }
 ```
-* Import the included SQL schema with sample content (highly recommended). If you don't import the SQL schema, an empty one will be created by the ORM on first run. However, you may need to perform some additional tweaks, and you will be missing out on a lot of examples. Only start with a clean schema if you intend to immediately strike out on your own in a different direction.
+* Import the included SQL schema with sample content (highly recommended). If you don't import the SQL schema, an empty one will be created by the ORM on first run. However, you may need to perform some additional tweaks, and you will be missing out on a lot of examples. Only start with a clean schema if you intend to immediately strike out on your own in a different direction (and even then, you'll probably want to have an instance with sample data).
+
+Example:
+```
+mysql -u username -p password -h localhost DATABASE_NAME < ./havoc.sql
+```
 
 * Optionally, near the top of config.js, modify the ports on which the simple socket and websocket servers for the game should run.
 ```
