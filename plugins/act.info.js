@@ -29,18 +29,31 @@ addStrings({
 ]interaction options */
 var interacts = function(target, ch) {
 	
-	var res = [(target.sex?'stat ':'id ') + target.name];
+	var res = [(target.sex?'stat ':'id ') + target.id];
 	
 	if (target.sex && ch.canAttack(target))
-		res.push(['kill ' + target.name]);
+		res.push(['kill ' + target.id]);
 	
 	if (target.attr) {
-	
+
 		if (target.attr.talk)
-			res.push(['talk ' + target.name]);
+			res.push(['talk ' + target.id]);
 		
 		if (target.attr.read)
-			res.push(['read ' + target.name]);
+			res.push(['read ' + target.id]);
+		
+		if (target.location) {
+			
+			if (target.location == 'storage')
+				res.push(['unstore ' + target.id]);
+			else
+				res.push(['store ' + target.id]);
+			
+			if (target.location == 'shop')
+				res.push(['unsell ' + target.id]);
+			else
+				res.push(['sell ' + target.id]);
+		}
 	}
 	
 	return res;
@@ -293,25 +306,36 @@ module.exports = {
 		return ch;
 	},
 
-	inventory: function() {
+	inventory: function(arg) {
 		
-		var ch = this, its = '', n = 0, m = my();
+		var ch = this, m = my(), n = 0, its;
 
+		if (arg)
+			its = (m.U_POUCH + ' view inventory').mxpsend('inventory') + '  |  ' + (m.U_STORAGE + ' view storage').mxpsend('storage') + '\r\n\r\n'
+		else
+			its = (m.U_STORAGE + ' view storage').mxpsend('storage') + '  |  ' + (m.U_SCALES + ' view shop').mxpsend('inventory shop') + '\r\n\r\n'
+					
 		//ch.send(my().YOUR_ITEMS.color('&B'));
 		if (!ch.items)
 			return;
-		
+
 		ch.items.sort(function(a, b) {
 			if (a.location == b.location)
 				return a.name < b.name;
 			return a.location < b.location;
 		})
 		.forEach(function(it, i) {
-			
-			if (it.location == 'ground')
-				return;
-						
-			if (ch.items[i + 1] 
+
+			if (arg) {
+				if (it.location != arg[0])
+					return;
+			}
+			else
+				if (['ground', 'storage', 'shop'].has(it.location))
+					return;
+
+			if (!arg
+				&& ch.items[i + 1] 
 				&& ch.items[i + 1].ItemProtoId == it.ItemProtoId
 				&& ch.items[i + 1].location == it.location) {
 				n++;
@@ -327,12 +351,12 @@ module.exports = {
 				details = ' (asking ' + m.U_COINS.color('&220') + ' ' + it.attr.price.comma() + ')';
 
 			try {
-				var qid = ch.cmd.identify.apply(ch, [[it.id + ''], m.SILENT]).nomxp().nocolor().nolf();
+				var tooltip = ch.cmd.identify.apply(ch, [it, m.SILENT]).nomxp().nocolor().nolf();
 			}
 			catch(ex) { error(ex); };
 			
 			its +=
-				(' ' + it.name).mxpselect(interacts(it, ch), qid || null) + ' ' 
+				(' ' + it.name).mxpselect(interacts(it, ch), tooltip || null) + ' ' 
 				+ m.ITEM_LOCATION_ICON[it.location] + ' ' 
 				+ (n?('x' + (n + 1) + ' ').color('&K'):'') + ' '
 				+ it.location.color('&K') + details + ' ' 
@@ -350,7 +374,62 @@ module.exports = {
 	equipment: function() {
 		return this.cmd.inventory.call(this);
 	},
+	
+	storage: function(arg) {
 		
+		var ch = this, m = my(), n = 0;
+
+		//ch.send(my().YOUR_ITEMS.color('&B'));
+		Item.findAll({
+			where: {
+				UserId: ch.user.id,
+				location: 'storage'
+			},
+			order: 'name DESC'
+		})
+		.then(function(items) {
+			
+			var its = (m.U_POUCH + ' view inventory').mxpsend('inventory') + '  |  ' + (m.U_SCALES + ' view shop').mxpsend('inventory shop') + '\r\n\r\n';
+			
+			items.forEach(function(it, i) {
+
+				if (items[i + 1] 
+					&& items[i + 1].ItemProtoId == it.ItemProtoId
+					&& items[i + 1].location == it.location) {
+					n++;
+					return;
+				}
+				
+				var details = '';
+
+				if (it.location == 'worn')
+					details = '  on ' + it.position;
+				
+				if (it.location == 'shop')
+					details = ' (asking ' + m.U_COINS.color('&220') + ' ' + it.attr.price.comma() + ')';
+
+				try {
+					var tooltip = ch.cmd.identify.apply(ch, [it, m.SILENT]).nomxp().nocolor().nolf();
+				}
+				catch(ex) { error(ex); };
+				
+				its +=
+					(' ' + it.name).mxpselect(interacts(it, ch), tooltip || null) + ' ' 
+					+ m.ITEM_LOCATION_ICON[it.location] + ' ' 
+					+ (n?('x' + (n + 1) + ' ').color('&K'):'') + ' '
+					+ it.location.color('&K') + details + ' ' 
+					+ m.ITEM_TYPE_ICON[it.type].color('&K')
+					+ '\r\n';
+				
+				n = 0;
+			});
+			
+			ch
+			.snd('<FRAME Name="items" Parent="ChatterBox">'.mxp())
+			.snd(its.mxpdest('items'));
+		});
+	},
+	
 	score: function(arg) {
 		return this.cmd.stat.call(this, arg);  /* forward to stat command */
 	},
@@ -406,18 +485,28 @@ module.exports = {
 
 	identify: function(arg, mode) {
 		
-		var ch = this, m = my();
+		var ch = this, it, m = my();
 		
 		if (!arg)
 			return ch.send(m.IDENTIFY_USAGE);
 	
-		var it = ch.findItem(arg.join(' '), 'has-at-vis-world');
+		if (arg.location) /* can pass an item object directly */
+			it = arg;
+		else
+		if (arg[0].isnum()) {
+			for (var i in m.items)
+				if (m.items[i].id == arg[0])
+					it = m.items[i];
+		}
+		
+		if (!it)
+			it = ch.findItem(arg.join(' '), 'has-at-vis-world');
 
 		if (!it)
 			it = ch.findItem(arg[0], 'has-at-vis-world');
 		
 		if (!it) {
-			log('act.item identify no such item '+arg[0]);
+			log('act.item identify no such item: ' + stringify(arg));
 			return ch.send(m.NO_SUCH_ITEM);
 		}
 		

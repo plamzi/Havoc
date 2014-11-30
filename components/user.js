@@ -557,6 +557,11 @@ module.exports = {
 
 	validPass: function(p) { return (p.length > 5 && p.length < 36); },
 
+	existingCharname: function(n) {
+		
+		return my().charindex.some(function(i) { return (i.name == n); }); 
+	},
+	
 	genCharname: function(d) {
 		
 		if (d && d.sex) {

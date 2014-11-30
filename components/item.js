@@ -126,6 +126,8 @@ module.exports = {
 		Char.hasMany(Item, { as: 'items' });
 		Item.belongsTo(Char);
 		
+		Item.belongsTo(User); /* shared storage */
+		
 		Mob.hasMany(Item, { as: 'items' });
 		Item.belongsTo(Mob);
 		
@@ -384,16 +386,16 @@ module.exports = {
 			return my().itemproto[this.ItemProtoId];
 		},
 		
-		setAttr: function(a) {
+		setAttr: function(a, cb) {
 			var it = this, attr = it.attr;
 			extend(attr, a);
-			it.updateAttributes({ attr: attr }, ['attr']);
+			it.updateAttributes({ attr: attr }, ['attr'], function() { !cb || cb(it) });
 		},
 	
-		unsetAttr: function(a) {
+		unsetAttr: function(a, cb) {
 			var it = this, attr = it.attr;
 			delete attr[a];
-			it.updateAttributes({ attr: attr }, ['attr']);
+			it.updateAttributes({ attr: attr }, ['attr'], function() { !cb || cb(it) });
 		}
 	}
 };

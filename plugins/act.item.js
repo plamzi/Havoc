@@ -36,7 +36,11 @@ addStrings({
 		YOU_BOUGHT_X_Y: 				"You bought %s %s.",
 		USE_FULL_NAME_TO_DISPOSE:		"To dispose of an item, you have to type its full name.",
 		MATCHING_SHOP_ITEMS:			"Matching items for sale:",
-		ITEM_DETAILS:					"Item details:"
+		ITEM_DETAILS:					"Item details:",
+		ITEM_ALREADY_IN_STORAGE:		"This item is already in storage.",
+		ITEM_NOT_IN_STORAGE:			"This item is not in storage.",
+		X_PLACED_IN_STORAGE:			"%s was placed in storage.",
+		X_TAKEN_FROM_STORAGE:			"%s was taken out of storage.",
 	}
 });
 
@@ -295,6 +299,76 @@ module.exports = {
 						+ my().U_COINS.color('&221') + ' ' + r[i].attr.price.comma() + ' '
 						+ (r[i].CharId?m.charindex[r[i].CharId].name:m.mobindex[r[i].MobId].name).color('&Ki')
 					);
+			});
+		},
+
+		store: function(arg) {
+			
+			if (!arg || !arg[0].isnum())
+				return;
+			
+			var ch = this, it = ch.items.filter(function(i) { return i.id == arg[0]; });
+			
+			if (it)
+				it = it[0];
+			else
+				return;
+			
+			if (it.location == 'storage')
+				return ch.send(my().ITEM_ALREADY_IN_STORAGE);
+			
+			it.location = 'storage';
+			
+			it.updateAttributes({
+				location: 'storage',
+				UserId: ch.user.id
+			})
+			.then(function() {
+				ch.getItems().then(function(r) {
+					ch.items = r;
+					if (ch.s.portal)
+						ch.do('inventory');
+					else
+						ch.send(u.format(my().X_PLACED_IN_STORAGE, it.name.cap()));
+				});
+			});
+		},
+		
+		unstore: function(arg) {
+			
+			if (!arg || !arg[0].isnum())
+				return;
+			
+			var ch = this;
+			
+			Item.findAll({
+				where: {
+					UserId: ch.user.id,
+					location: 'storage'
+				}
+			})
+			.then(function(storage) {
+				
+				var it = storage.filter(function(i) { return i.id == arg[0]; });
+				
+				if (it)
+					it = it[0];
+				else
+					return;
+				
+				it.updateAttributes({
+					location: 'carried',
+					CharId: ch.id
+				})
+				.then(function() {
+					ch.getItems().then(function(r) {
+						ch.items = r;
+						if (ch.s.portal)
+							ch.do('inventory');
+						else
+							ch.send(u.format(my().X_TAKEN_FROM_STORAGE, it.name.cap()));
+					});
+				});
 			});
 		},
 

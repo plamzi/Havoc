@@ -30,7 +30,12 @@ module.exports = {
 					var msg = u.format(my().INVALID_CHARNAME, user.genCharname(d).color('&B'));
 					s.Send( (my().CREATION_ERROR + '\r\n' + msg).mxpdest('Modal') );
 				}
-				
+
+				if (user.existingCharname(d.name)) {
+					var msg = u.format(my().CHAR_X_EXISTS, d.name);
+					s.Send( (my().CREATION_ERROR + '\r\n' + msg).mxpdest('Modal') );
+				}
+
 				s.create = { 
 					name: d.name.cap(), 
 					cls: d.cls.cap(),

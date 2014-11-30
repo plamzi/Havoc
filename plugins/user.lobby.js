@@ -33,7 +33,7 @@ addStrings({
 		SUGGEST:			"Suggest",
 		ACCEPT:				"Accept",
 		NEXT:				"Next",
-		CHAR_EXISTS:		"The name '%s' is not available. Please try another: ",
+		CHAR_X_EXISTS:		"The name '%s' is not available. Please try another: ",
 		CHAR_AVAILABLE:		"\r\nWould you like to create '%s'? ",
 		CHAR_INVALID:		"Invalid character name. Please try another: ",
 		CREATION_ERROR: 	'Creation error:',
@@ -210,7 +210,7 @@ module.exports = {
 				user.enter(s);
 			}
 			else /* existing char name belonging to another user */
-				user.lobby(u.format(my().CHAR_EXISTS, d));
+				user.lobby(u.format(my().CHAR_X_EXISTS, d));
 		});
 	},
 	
@@ -603,17 +603,17 @@ module.exports = {
 		}
 		
 		Char.find({
-			where: { name: d }
+			where: { name: d.cap() }
 		})
 		.success(function(r) {
 			
 			if (r)
-				return user.charPromptName(s, d, u.format(my().CHAR_EXISTS, d));
+				return user.charPromptName(s, 'start', u.format(my().CHAR_X_EXISTS, d));
 
 			if (!user.validName(d, 'char'))
-				return user.charPromptName(s, d, my().INVALID_CHARNAME);
+				return user.charPromptName(s, 'start', my().INVALID_CHARNAME);
 			
-			/* available character name */
+			/* all good, create character */
 			s.create.name = d;
 			user.createChar(s);
 		});
