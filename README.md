@@ -25,7 +25,7 @@ http://www.aaralon.com/text
 
 http://www.aaralon.com
 
-(graphics, requires a Facebook account or existing user at this time, in progress so not fully playable yet)
+(graphics, work in progress so not fully playable yet)
 
 
 <b>Features include:</b>

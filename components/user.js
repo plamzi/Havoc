@@ -205,7 +205,7 @@ module.exports = {
 		.snd(m.PROTOCOL.GO_MXP);
 
 		info('portal client assumed', s);
-		s.portal = 1; /* for now, let's assume portal client */
+		s.portal = 1; /* for now, let's assume portal client to avoid timing issues */
 
 		after(2, function() {
 			if (!s.user) {
@@ -219,7 +219,7 @@ module.exports = {
 
 	userPrompt: function(s, err) {
 		
-		debug('userPrompt');
+		debug('userPrompt', s);
 		
 		if (s.portal)
 			s.sendGMCP('LoginPrompt', {
@@ -318,7 +318,7 @@ module.exports = {
 				s.next = user.password;
 			}
 			else {
-				if (s.portal && !s.gui)
+				if (s.portal)
 					s.sendGMCP('Modal', {
 						title: 'Create user',
 						text: u.format(m.USER_AVAILABLE, s.username),

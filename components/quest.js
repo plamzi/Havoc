@@ -553,14 +553,14 @@ module.exports = {
 		var mob = char.protoByName(name);
 		
 		if (!mob)
-			return warning('quest.createMob could not find mob named ' + name);
+			return warning('quest.createMob could not find proto for mob named ' + name);
 		
 		var o = mob.values;
 		o.MobProtoId = o.id, delete o.id;
 		
 		Mob.create(o).success(function(mob) {
 
-			char.initMob(mob);
+			char.initChar(mob);
 						
 			/* set quest number and bind this mob to the quest owner */
 			mob.setAttr({
@@ -581,7 +581,7 @@ module.exports = {
 
 	quiz: function(ch, quiz, q) {
 	    
-		debug('quest.quiz');
+		//debug('quest.quiz');
 		
 	    var nr, ch_q = ch.hasQuest(q.id);
 	    
