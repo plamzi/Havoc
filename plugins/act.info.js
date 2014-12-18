@@ -122,11 +122,11 @@ module.exports = {
 
 			info('act.info setting up mxp frames for a portal client', s);
 			
-			s.write('<FRAME Name="ChatterBox">'.mxp())
+			s
 			.write('<FRAME Name="items" Parent="ChatterBox">'.mxp())
 			.write('<FRAME Name="stats" Parent="ChatterBox">'.mxp())
-			.write('<FRAME Name="chat" Parent="ChatterBox">'.mxp())
-			//.write('<FRAME Name="guild" Parent="ChatterBox">'.mxp())
+			//.write('<FRAME Name="chat" Parent="ChatterBox">'.mxp())
+			//.write('<FRAME Name="events" Parent="ChatterBox">'.mxp())
 			.write('<FRAME Name="who" Parent="ChatterBox">'.mxp())
 			//.write('<FRAME Name="attacks" Parent="ChatterBox">'.mxp())
 			;
@@ -157,20 +157,23 @@ module.exports = {
 		
 		/* index user and char when char component has loaded up */
 		char.register('act.info', 'init', index);
-		
+
 		/* when a user creates a new character */
 		char.register('act.info', 'create.pc', function() { index('pc'); });
-		
-		/* when char component creates a new NPC prototype */
-		char.register('act.info', 'create.npc', function() { index('npc'); });
-		
+
+		/* when the char component creates a new NPC instance */
+		char.register('act.info', 'create.npc', function() { /* index('npc'); */ });
+
+		/* when the char component batch-creates new NPC instances */
+		char.register('act.info', 'create.npcs', function() { index('npc'); });
+
 		/* when a PC enters the game */
 		char.register('act.info', 'enter.pc', function(ch) {
-		
+
 			ch.register('act.info', '1.do', function() {
 				onDo(this);
 			});
-			
+
 			if (ch.s.portal)
 			after(2, function() {
 				ch.do('eq');
@@ -277,8 +280,8 @@ module.exports = {
 		
 		for (i in P) {
 			
-			if (ch == P[i])
-				ch.snd(m.U_SQUARE_FULL + ' ');
+			//if (ch == P[i])
+				//ch.snd(m.U_SQUARE_FULL + ' ');
 				
 			ch.send(
 				P[i].name.mxpselect(interacts(P[i], ch)).color('&B') + ' ' 
@@ -311,9 +314,15 @@ module.exports = {
 		var ch = this, m = my(), n = 0, its;
 
 		if (arg)
-			its = (m.U_POUCH + ' view inventory').mxpsend('inventory') + '  |  ' + (m.U_STORAGE + ' view storage').mxpsend('storage') + '\r\n\r\n'
+			its = (m.U_POUCH + ' view inventory').mxpsend('inventory') 
+			+ '  |  ' + (m.U_STORAGE + ' view storage').mxpsend('storage') 
+			+ '  |  ' + (m.U_SELECT + ' filter').mxpselect(['inventory worn', 'inventory carried', 'inventory usable'], ['worn', 'carried', 'usable'])  
+			+ '\r\n\r\n'
 		else
-			its = (m.U_STORAGE + ' view storage').mxpsend('storage') + '  |  ' + (m.U_SCALES + ' view shop').mxpsend('inventory shop') + '\r\n\r\n'
+			its = (m.U_STORAGE + ' view storage').mxpsend('storage') 
+			+ '  |  ' + (m.U_SCALES + ' view shop').mxpsend('inventory shop') 
+			+ '  |  ' + (m.U_SELECT + ' filter').mxpselect(['inventory worn', 'inventory carried', 'inventory usable'], ['worn', 'carried', 'usable']) 
+			+ '\r\n\r\n'
 					
 		//ch.send(my().YOUR_ITEMS.color('&B'));
 		if (!ch.items)
@@ -327,6 +336,11 @@ module.exports = {
 		.forEach(function(it, i) {
 
 			if (arg) {
+				if (arg[0] == 'usable') {
+					if (!it.attr.use)
+						return;
+				}
+				else
 				if (it.location != arg[0])
 					return;
 			}
@@ -334,8 +348,7 @@ module.exports = {
 				if (['ground', 'storage', 'shop'].has(it.location))
 					return;
 
-			if (!arg
-				&& ch.items[i + 1] 
+			if (ch.items[i + 1] 
 				&& ch.items[i + 1].ItemProtoId == it.ItemProtoId
 				&& ch.items[i + 1].location == it.location) {
 				n++;
@@ -528,9 +541,9 @@ module.exports = {
 			
 			//+ (it.position?"position: ".color('&Ki') + it.position : "") + ' '
 			
-			+ (it.attr.use?"\r\nuse: ".color('&K') + it.attr.use.name : " ")
+			+ (it.attr.use ? "\r\nuse: ".color('&K') + it.attr.use.name : " ")
 			
-			+ (it.attr.use && it.attr.use.times?" x" + it.attr.use.times : " ")
+			+ (it.attr.use && it.attr.use.times ? " x" + it.attr.use.times : " ")
 			
 			+ (it.attr.dura ? "durability " + it.attr.dura + "/100 " : " ");
 			

@@ -91,7 +91,7 @@ addStrings({
 		
 		GUILD_INFO:					"Guild Info:",
 		
-		GUILD_YOU_ARE_NOT_IN_ONE:	"You are not a member of any guild: " + "join guild".mxpsend('guild join') + '  ' + "create guild".mxpsend('guild create')
+		GUILD_YOU_ARE_NOT_IN_ONE:	"You are not a member of any guild.\r\n" + "join a guild".mxpsend('guild join') + '  ' + "create a guild".mxpsend('guild create')
 	}
  
 });

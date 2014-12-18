@@ -21,6 +21,7 @@ addStrings({
 	eng: {
 		
 		USERNAME:			("Press " + "reset".mxpsend() + " to request a password reset email.\r\nPress " + "token".mxpsend() + " if you already have one.").style(11, "&Ki") + "\r\nEnter new or existing username: ",
+		USERPROMPT_INFO:	"To create a new account, enter a desired username and leave password field blank.",
 		USERNAME_PROMPT:	"Enter new or existing username: ",
 		PASSWORD:			"Password: ",
 		AUTH_FAIL:			"Invalid password. Try again: ",
@@ -221,8 +222,8 @@ module.exports = {
 		
 		debug('userPrompt', s);
 		
-		if (s.portal)
-			s.sendGMCP('LoginPrompt', {
+		if (s.portal) {
+			var o = {
 				title: my().USERNAME_PROMPT,
 		        placeholder: my().USERNAME_PLACEHOLDER,
 		        error: err,
@@ -231,7 +232,13 @@ module.exports = {
 		        	'Enter token': 'token'
 		        },
 		    	backdrop: 'static'
-		    });
+		    };
+			
+			if (!err)
+				o.info = my().USERPROMPT_INFO;
+			
+			s.sendGMCP('LoginPrompt', o);
+		}
 		else {
 			!err || s.snd(err);
 			s.snd(my().USERNAME);
@@ -320,7 +327,7 @@ module.exports = {
 			else {
 				if (s.portal)
 					s.sendGMCP('Modal', {
-						title: 'Create user',
+						title: 'Create user?',
 						text: u.format(m.USER_AVAILABLE, s.username),
 						buttons: {
 							'Yes': 'yes',

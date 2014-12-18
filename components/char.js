@@ -277,7 +277,7 @@ module.exports = {
 	
 	createChar: function(s) {
 		
-		debug('char.createChar');
+		debug('char.createChar (PC)');
 
 		Char.create({
 			name: s.create.name,
@@ -292,13 +292,14 @@ module.exports = {
 			GuildId: s.user.attr.guild ? s.user.attr.guild.id : null
 		})
 		.success(function(ch) {
-		
-			char.emit('create.pc', ch);
-			
-			s.user.reload().success(function() {
+			s.user.getChars().then(function(r) {
+				s.user.chars = r;
+				char.emit('create.pc', ch);
 				return user.lobby(s);
 			});
-		});	
+		});
+		
+		delete s.create, delete s.next;
 	},
 	
 	validateChar: function(ch) {
@@ -519,10 +520,17 @@ module.exports = {
 		var mobs = my().mobs;
 
 		for (var i in r) {
+			
 			if (r[i].attr.max == 1) {
+				
 				var found = mobs.filter(function(M) { return M.MobProtoId == r[i].id; });
+				
 				if (!found.length) {
-					char.createMob(r[i].values);
+					
+					char.createMob(r[i].values, function() {
+						char.emit('create.npcs'); /* this will tip off act.info to re-index instances */
+					});
+					
 					info('char.loadUniqueMobs: spawned unique mob ' + r[i].name);
 				}
 			}
@@ -537,11 +545,19 @@ module.exports = {
 		var mobs = my().mobs;
 		
 		for (var i in r) {
+			
 			if (r[i].attr.max > 1) {
+				
 				var n = mobs.filter(function(M) { return M.MobProtoId == r[i].id; }).length;
+				
 				while (n < r[i].attr.max) {
-					char.createMob(r[i].values);
-					n++;
+					
+					if (++n == r[i].attr.max)
+						char.createMob(r[i].values, function() {
+							char.emit('create.npcs'); /* this will tip off act.info to re-index instances on last spawn */
+						});
+					else
+						char.createMob(r[i].values);
 				}
 			}
 		}

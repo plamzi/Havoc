@@ -26,6 +26,7 @@ addStrings({
 		FROM_X:				"From %s:",
 		RETURN_TO_INBOX:	my().U_INBOX + " Back to inbox",
 		YOUR_PRIVATE_MESSAGE_WAS_SENT:	"Your private message was sent. If the user has enabled forwarding, it will be emailed to them.",
+		MESSAGE_DELETED:	"Message deleted.",
 		
 		PROMPT_NEW_CHAR:	"Name your new character:",
 		HEROIC_NAME_LIKE_:	"a heroic name like ",
@@ -68,9 +69,9 @@ addStrings({
 
 /* private function handling pm from lobby inbox */
 
-var pm = function(s, d) {
+var pm = function(s, cmd, d) {
 
-	if (!d || d == '/a')
+	if (!cmd || cmd == '/a' || !d)
 		return user.showInbox(s, my().PM_ABORTED);
 	
 	s.pm.text = d;
@@ -289,7 +290,8 @@ module.exports = {
 		if (s.password != d)
 			return user.lobby(s, my().PASSWORDS_DIFFER);
 		
-		s.user.updateAttributes({ password: md5(d) })
+		s.user
+		.updateAttributes({ password: md5(d) })
 		.success(function() {
 			user.lobby(s, my().PASSWORD_CHANGED);
 		});
@@ -297,7 +299,7 @@ module.exports = {
 
 	showPrefs: function(s) {
 
-		debug('user.showPrefs');
+		debug('user.showPrefs', s);
 		
 		var m = my(), msg = '';
 		
@@ -343,7 +345,7 @@ module.exports = {
 	
 	showInbox: function(s, d) {
 
-		debug('user.showInbox');
+		debug('user.showInbox', s);
 		
 		if (!d || d == 'lobby')
 			return user.lobby(s);
@@ -361,7 +363,9 @@ module.exports = {
 				msg = m.INBOX_EMPTY;
 			
 			r.forEach(function(i) {
-				msg += m.U_PENCIL.mxpsend('pm ' + i.from_id) + ' ' + i.from + ': ' + i.text.nolf().ellipse(30).mxpsend('read ' + i.id, i.text) + ' ' 
+				msg += 'x'.mxpsend('delete ' + i.id) + '  ' 
+					+ m.U_PENCIL.mxpsend('pm ' + i.from_id) + '  ' 
+					+ i.from + ': ' + i.text.nolf().ellipse(30).mxpsend('read ' + i.id, i.text) + ' ' 
 					+ i.createdAt.toUTCString().substring(0, 11).replace(',','').style(11, '&Ki') + '\r\n';
 			});
 			
@@ -384,7 +388,7 @@ module.exports = {
 	
 	inboxAction: function(s, d) {
 
-		debug('user.inboxAction');
+		debug('user.inboxAction', s);
 		
 		if (!d)
 			return user.lobby(s);
@@ -438,6 +442,21 @@ module.exports = {
 			});
 			
 			s.next = pm;
+		}
+		
+		if (arg[0] == 'delete' && arg[1] && arg[1].isnum()) {
+			
+			var msg = s.user.inbox.filter(function(i) { return i.id == arg[1]; });
+			 
+			if (!msg[0])
+				return;
+			 
+			Message.find(arg[1])
+			.then(function(r){
+				r.destroy().success(function() {
+					return user.showInbox(s, 'start', my().MESSAGE_DELETED);
+				});
+			});
 		}
 	},
 	

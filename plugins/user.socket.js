@@ -45,11 +45,12 @@ module.exports = {
 		com = com[0];
 		*/
 		
-		cmd = d.split('\r\n')[0]; /* handle multiline input here as low priority */
+		/* handle multiline input here */
+		cmd = d.split('\r\n')[0];
 		//log('user.do fallback to user commands: ' + cmd);
 		
 		if (s.next)
-			s.next(s, cmd);
+			s.next(s, d.replace(/[\r\n]/g, ''));
 		else
 			error('user.socket do reached end with nothing to do next');
 	},
@@ -74,10 +75,9 @@ module.exports = {
 	
 	sendGMCP: function(name, msg) {
 		var m = my();
-		this
-			.snd(m.PROTOCOL.GMCP_START)
-				.write(name + ' ' + stringify(msg))
-					.snd(m.PROTOCOL.GMCP_STOP);
+		this.snd(m.PROTOCOL.GMCP_START);
+		this.write(name + ' ' + stringify(msg));
+		this.snd(m.PROTOCOL.GMCP_STOP);
 	},
 
 	receiveGMCP: function(s, d) {
