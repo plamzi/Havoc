@@ -9,7 +9,7 @@ log = function(msg, s) {
 	if (s) {
 		msg = u.format(
 			t + ' %s %s',
-			(s.user ? (s.ch ? (s.user.name + ' / ' + s.ch.name) : s.user.name) : s.remoteAddress) + ': ', 
+			(s.user ? (s.ch ? (s.user.name + ' / ' + s.ch.name) : s.user.name) : s.remoteAddress) + ' ', 
 			msg
 		);
 		console.log(msg.colorize());
@@ -200,7 +200,7 @@ define(Array, 'between', function() {
 
 define(Array, 'filenames', function() {
 	return this
-	.filter(function(i) { return i.toLowerCase().has('.js'); })
+	.filter(function(i) { return i.toLowerCase().match(/\.js$/); })
 	.map(function(i) { return i.replace(/\.[^/.]+$/, ""); });
 });
 
@@ -316,7 +316,7 @@ String.prototype.font = function(a) { return ('<font '+a+'>').mxp() + this + '</
 
 String.prototype.mxpsend = function(a, b) { return ('<send href="'+ ( exists(a) ? a : this ) + '"' + ( b ? ' hint="'+b+'"' : '') + '>').mxp() + this + '</send>'.mxp(); };
 
-String.prototype.mxpselect = function(arr, b) { 
+String.prototype.mxpselect = function(arr, b) {
 	var hint = (b && b.pop) ? b.join('|') : b;
 	return ('<send href="'+arr.join('|') + '"' + ( b ? ' hint="' + hint + '"':'') +'>').mxp() + this + '</send>'.mxp(); 
 };
