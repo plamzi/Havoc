@@ -314,14 +314,14 @@ module.exports = {
 		var ch = this, m = my(), n = 0, its;
 
 		if (arg)
-			its = (m.U_POUCH + ' view inventory').mxpsend('inventory') 
-			+ '  |  ' + (m.U_STORAGE + ' view storage').mxpsend('storage') 
-			+ '  |  ' + (m.U_SELECT + ' filter').mxpselect(['inventory worn', 'inventory carried', 'inventory usable'], ['worn', 'carried', 'usable'])  
+			its = (m.U_POUCH + ' inventory').mxpsend('inventory') 
+			+ '  |  ' + (m.U_STORAGE + ' storage').mxpsend('storage') 
+			+ '  |  ' + (m.U_SELECT + ' filter').mxpselect(['inventory worn', 'inventory carried', 'inventory usable'], ['apply inventory filter','worn', 'carried', 'usable'])  
 			+ '\r\n\r\n'
 		else
-			its = (m.U_STORAGE + ' view storage').mxpsend('storage') 
-			+ '  |  ' + (m.U_SCALES + ' view shop').mxpsend('inventory shop') 
-			+ '  |  ' + (m.U_SELECT + ' filter').mxpselect(['inventory worn', 'inventory carried', 'inventory usable'], ['worn', 'carried', 'usable']) 
+			its = (m.U_STORAGE + ' storage').mxpsend('storage') 
+			+ '  |  ' + (m.U_SCALES + ' shop').mxpsend('inventory shop') 
+			+ '  |  ' + (m.U_SELECT + ' filter').mxpselect(['inventory worn', 'inventory carried', 'inventory usable'], ['apply inventory filter','worn', 'carried', 'usable']) 
 			+ '\r\n\r\n'
 					
 		//ch.send(my().YOUR_ITEMS.color('&B'));
@@ -349,8 +349,8 @@ module.exports = {
 					return;
 
 			if (ch.items[i + 1] 
-				&& ch.items[i + 1].ItemProtoId == it.ItemProtoId
-				&& ch.items[i + 1].location == it.location) {
+			 && ch.items[i + 1].ItemProtoId == it.ItemProtoId
+			 && ch.items[i + 1].location == it.location) {
 				n++;
 				return;
 			}
@@ -380,7 +380,7 @@ module.exports = {
 		});
 		
 		ch
-		.snd('<FRAME Name="items" Parent="ChatterBox">'.mxp())
+		.snd('<FRAME Name="items" Parent="ChatterBox">'.mxp()) /* flush frame contents */
 		.snd(its.mxpdest('items'));
 	},
 	
@@ -402,7 +402,7 @@ module.exports = {
 		})
 		.then(function(items) {
 			
-			var its = (m.U_POUCH + ' view inventory').mxpsend('inventory') + '  |  ' + (m.U_SCALES + ' view shop').mxpsend('inventory shop') + '\r\n\r\n';
+			var its = (m.U_POUCH + ' inventory').mxpsend('inventory') + '  |  ' + (m.U_SCALES + ' shop').mxpsend('inventory shop') + '\r\n\r\n';
 			
 			items.forEach(function(it, i) {
 

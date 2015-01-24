@@ -22,7 +22,8 @@ module.exports = {
 		
 		var s = this, cmd;
 
-		log('got: |' + d + '|', s);
+		if (config.loglevel == 'high')
+			log('got: |' + d + '|', s);
 		
 		if (d && d.length) /* normalize CR LF */
 			d = d.replace(/(\r\n|\n\r)/gi, '\n').replace(/\n/gi, '\r\n');

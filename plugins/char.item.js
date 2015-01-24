@@ -159,10 +159,9 @@ module.exports = {
 		if (ch.npc())
 			return;
 			
-		if (!ch.hasItem("The Adventurer's Guide to Calandor"))
-			item.create("The Adventurer's Guide to Calandor", function(it) {
-				ch.take(it);
-			});
+		item.create("The Adventurer's Guide to Calandor", function(it) {
+			ch.take(it);
+		});
 			
 		if (ch.pref('kit'))
 			return log('has starter kit', ch.s);
