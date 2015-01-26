@@ -19,10 +19,12 @@ log = function(msg, s) {
 };
 
 info = function(msg, s) {
+	if (config.server.loglevel == 'high')
 	return log(msg.color('&K'), s); 
 };
 
 debug = function(msg, s) {
+	if (['medium', 'high'].has(config.server.loglevel))
 	return log(msg.color('&g'), s); 
 };
 
