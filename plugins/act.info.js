@@ -459,6 +459,14 @@ module.exports = {
 					+ 'Class: '.color('&K') + vict.class + ' '
 					+ 'Trade: '.color('&K') + vict.trade + ' \r\n';
 			
+			if (ch != vict) { /* not self-stat */
+				ch.snd(msg).emit('proc.stat', vict); /* we can't chain on emit method. to do: shim it so we can */
+				ch.emit('proc.aff', vict);
+				ch.emit('post.stat', vict);
+				ch.snd('</DEST>'.mxp());
+				return;
+			}
+			
 			msg += '&KHealth: &R' + vict.stat('hit') + '&n/&r' + vict.stat('maxhit')
 					+'&n &KMana:&n &B' + vict.stat('mana') + '&n/&b' + vict.stat('maxmana')
 					+'&n &KStamina:&n &G' + vict.stat('stamina') + '&n/&g' + vict.stat('maxstamina') + '&n\r\n';
@@ -466,7 +474,7 @@ module.exports = {
 			msg += my().U_SHIELD.color('&M') + ' ' + vict.stat('armor') + ' ' + my().U_SWORDS.color('&R') + ' ' + vict.stat('damage') + ' ';
 			msg += my().U_COINS.color('&220') + ' ' + vict.getGold().comma() + ' ';
 			
-			ch.snd(msg).emit('proc.stat', vict); /* other plugins can listen to proc.stat and append any extra info, e. g. char.class will add exp */
+			ch.snd(msg).emit('proc.stat', vict); /* other plugins can listen to proc.stat and append any extra info, e. g. char.class will add info on exp */
 			
 			msg = '';
 			for (var i in ch.attr.aff) {
@@ -586,8 +594,8 @@ module.exports = {
 			for (var i in r) {
 				var usr = m.userindex[r[i].UserId]; 
 				who
-				+= m.U_HUMAN.style(16, '&178') + ' ' + usr.name.mxpselect(['pm ' + usr.id, 'whois ' + usr.id ], ['pm ' + usr.name, 'whois ' + usr.name]) + ' '
-				+ m.U_GROUP.style(16, '&B') + ' ' + r[i].name.mxpselect(['pm ' + usr.id, 'stat ' + r[i].id], ['pm ' + r[i].name, 'stat ' + r[i].name]) + ' '
+				+= m.U_HUMAN.style(16, '&178') + ' ' + usr.name.mxpselect(['pm ' + usr.id, 'whois ' + usr.id ], ['', 'pm ' + usr.name, 'whois ' + usr.name]) + ' '
+				+ m.U_GROUP.style(16, '&B') + ' ' + r[i].name.mxpselect(['pm ' + usr.id, 'stat ' + r[i].id], ['', 'pm ' + r[i].name, 'stat ' + r[i].name]) + ' '
 				+ m.U_STAR.style(16, '&208') + ' ' + r[i].level + ' '
 				+ r[i].updatedAt.toUTCString().substring(0, 11).replace(',','').style(11, '&Ki') + ' '
 				+ '\r\n';

@@ -118,8 +118,9 @@ module.exports = {
 			ch.sendGMCP('ch.points', ch.points);
 			ch.sendGMCP('ch.attacks', ch.attacks);
 
-			ch.register('char.fight', 'post.stat', function() {
-				ch.snd('\r\n' + 'attacks'.mxpsend());
+			ch.register('char.fight', 'post.stat', function(vict) {
+				if (ch == vict)
+					ch.snd('\r\n' + 'attacks'.mxpsend());
 			});
 		});
 		
