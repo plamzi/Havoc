@@ -255,6 +255,12 @@ module.exports = {
 			ch.unregister('quest', 'proc.talk');
 			ch.unsetAttr('talk');
 		}
+		
+		if (ch.attr.quest) /* ephemeral quest npc instances get destroyed on death */
+			ch.register('quest', 'die', function(ch) {
+				log('destroying quest NPC: ' + ch.name);
+				char.destroyMob(ch, function() {});
+			});
 	},
 	
 	initQuestPC: function(ch) {
@@ -762,10 +768,8 @@ module.exports = {
 			if (!cq)
 				return warning('no active quest found on requested status update: ' + ch.name + ' ' + q.name);
 
-			cq.updateAttributes(o).success(function() {
-				ch.getQuests().success(function(qs) {
-					for (var i in qs)
-						qs[i].CharQuest.attr = eval('('+qs[i].CharQuest.attr+')');
+			cq.updateAttributes(o).then(function() {
+				ch.getQuests().then(function(qs) {
 					ch.quests = qs;
 				});
 			});
@@ -776,9 +780,7 @@ module.exports = {
 	
 	showCharQuests: function(ch) {
 
-		ch
-		.getQuests()
-		.then(function(cq) {
+		ch.getQuests().then(function(cq) {
 
 			if (!cq.length)
 				return ch.send(my().NO_ACTIVE_QUESTS);
@@ -795,8 +797,7 @@ module.exports = {
 
 	listAllQuests: function(ch) {
 		
-		Quest
-		.findAll({ where: { status: 'enabled'} })
+		Quest.findAll({ where: { status: 'enabled'} })
 		.then(function(cq) {
 			cq.forEach(function(q) {
 				ch.send(

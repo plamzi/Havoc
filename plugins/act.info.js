@@ -261,7 +261,7 @@ module.exports = {
 		for (var i = 0; i < M.length; i++) {
 			
 			if (M[i+1] && M[i+1].MobProtoId == M[i].MobProtoId) {
-				n++; /* stack mobs */
+				n++; /* stack mobs with same proto id */
 				continue;
 			}
 			

@@ -22,29 +22,20 @@ module.exports = {
 		
 		var s = this, cmd;
 
-		info('got: |' + d + '|', s);
+		debug('got: |' + d + '|', s);
 		
 		if (d && d.length) /* normalize CR LF */
 			d = d.replace(/(\r\n|\n\r)/gi, '\n').replace(/\n/gi, '\r\n');
 		
 		if (d && d != '\r\n') /* skip this for empty line feeds */
 			if (!(d = this.oob(d))) /* first check for out-of-band input */
-				return;
+				return this;
 		
 		//log('user.do past oob check: ' + d);
 		
 		if (s.ch)  /* active char - forward to ch.do */ 
 			return s.ch.do(d);
-		
-		/*
-		com = d.split('\r\n')[0].split(' ');
-		
-		if (com.length > 1)
-			args = com.slice(1);
-		
-		com = com[0];
-		*/
-		
+
 		/* handle multiline input here */
 		cmd = d.split('\r\n')[0];
 		//log('user.do fallback to user commands: ' + cmd);
@@ -78,6 +69,7 @@ module.exports = {
 		this.snd(m.PROTOCOL.GMCP_START);
 		this.write(name + ' ' + stringify(msg));
 		this.snd(m.PROTOCOL.GMCP_STOP);
+		return this;
 	},
 
 	receiveGMCP: function(s, d) {

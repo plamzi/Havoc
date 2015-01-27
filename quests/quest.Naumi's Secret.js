@@ -6,7 +6,7 @@ addStrings({
 		
 		X_QUEST_REFUSAL: "%s wishes you would keep out of %s affairs.",
 		
-		Q1_DESC: 'If you press this subject, you will find out more about Naumi\'s secret identity. Possibly the kind of information that dislodges one\'s head from one\'s shoulders.',
+		Q1_DESC: 'If you press this subject, you will find out more about Naumi\'s secret identity. Possibly the kind of knowledge that dislodges one\'s head from one\'s shoulders.',
 		
 		Q1_ALREADY_HELPING: "You're already helping me on this matter. Right?",
 		
