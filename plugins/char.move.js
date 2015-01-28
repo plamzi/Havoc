@@ -50,7 +50,7 @@ module.exports = {
 					ch.do('look');
 				});
 			
-			ch.fromRoom().toRoom(); /* we extract from room array and re-add to prevent ghosting if this is a reload */
+			ch.fromRoom().toRoom(); /* we extract from room array and re-add to prevent ghosting if this is a dynamic reload */
 		});
 		
 		/* this is when a PC exits the game. we may modify this to keep linkless players around for a while. */
@@ -77,7 +77,7 @@ module.exports = {
 		return my().zone[this.at.zone].actors[this.at.x + 'x' + this.at.y];
 	},
 
-	fromRoom: function() {
+	fromRoom: function() { /* removes character from a room array (index) */
 		
 		var ch = this;
 
@@ -105,7 +105,7 @@ module.exports = {
 		return ch;
 	},
 
-	setOrigin: function() {
+	setOrigin: function() { /* pick a starting position for an NPC instance from prototype's specified ranges */
 
 		var ch = this, at = clone(ch.getProto().at);
 		
@@ -131,10 +131,7 @@ module.exports = {
 		else
 			ch.fromRoom().toRoom(config.game.start);
 		
-		ch.emit('appear');
-		
-		ch.do('look');
-		
+		ch.emit('appear').do('look');
 		return this;
 	},
 
@@ -161,7 +158,7 @@ module.exports = {
 			n = p[p.length - 1];
 			ch.at = n[1];
 
-			if (++limit > 1000) {
+			if (++limit > 5000) {
 				warning('char.move path hit safety limit (1000 iterations).');
 				return null;
 			}
@@ -217,8 +214,7 @@ module.exports = {
 			A[i].emit('proc.entry', ch);
 		}
 		
-		ch.emit('self.entry', ch);
-		ch.emit('entry');
+		ch.emit('self.entry', ch).emit('entry');
 		return this;
 	},
 	
@@ -236,8 +232,7 @@ module.exports = {
 			A[i].emit('proc.exit', ch);
 		}
 
-		ch.emit('self.exit', ch);
-		ch.emit('exit');
+		ch.emit('self.exit', ch).emit('exit');
 		return this;
 	},
 	
@@ -322,13 +317,16 @@ module.exports = {
 
 	/* this determines whether certain automated mob activity will go into suspension */
 	isNearPlayers: function() {
+		
 		var ch = this, near = 0;
+		
 		ch.getPlayers().forEach(function(p) {
 			if (p.at.zone == ch.at.zone 
 				&& Math.abs(p.at.x - ch.at.x) < 10
 				|| Math.abs(p.at.y - ch.at.y) < 10)
 			near = 1;
 		});
+		
 		return near;
 	}
 };

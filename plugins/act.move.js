@@ -45,7 +45,7 @@ module.exports = {
 	travel: function(arg) {
 
 		if (!arg || arg.length != 2)
-			return this.send(m.TRAVEL_USAGE);
+			return this.send(my().TRAVEL_USAGE);
 		
 		var ch = this, path = ch.path({ zone: ch.at.zone, x: parseInt(arg[0]), y: parseInt(arg[1]) });
 		

@@ -106,7 +106,6 @@ merge = function(a, b) {
 
 by_name = function(a, b) { return a.name > b.name; };
 
-
 addStrings = function(o) {
 	for (var lang in o) {
 		if (global['strings.'+lang])
@@ -245,14 +244,12 @@ define(events.EventEmitter, 'register', function(id, event, callback) {
 define(events.EventEmitter, 'unregister', function(id, event, callback) {
 
 	if (!this._registered)
-		return 0;
+		return this;
 	
-	if (this._registered[id + '.' + event]) {
+	if (this._registered[id + '.' + event])
 		this.removeListener(event, this._registered[id + '.' + event]);
-		return 1;
-	}
 
-	return 0;
+	return this;
 });
 
 String.prototype.pronoun = function(ch, vict) {
