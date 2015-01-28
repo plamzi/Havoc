@@ -43,15 +43,17 @@ module.exports = {
         var res = null;
         
 		this.quests.some(function(q) { 
-			if (status && q.CharQuest.status == status && q.name == name) {
+			
+			if (status && q.name == name && q.CharQuest.status == status) {
 			    res = q.CharQuest;
 			    return true;
 			}
-			else
-			if (q.name == name) {
+			
+			if (!status && q.name == name) {
 			    res = q.CharQuest;
 			    return true;
 			}
+			
 			return false;
 		});
 		

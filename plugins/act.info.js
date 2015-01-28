@@ -176,8 +176,7 @@ module.exports = {
 
 			if (ch.s.portal)
 			after(2, function() {
-				ch.do('eq');
-				ch.do('stat');
+				ch.do('eq;stat');
 			});
 			
 			if (ch.s.portal)
@@ -237,7 +236,6 @@ module.exports = {
 			ch.snd(' ' + m.zone[z.zone].grid[z.y][z.x].color('&Ki'));
 
 		ch.send(''); /* line break */
-
 		ch.sendGMCP("ch.at", ch.at);
 			
 		if (ch.moving) /* cut output short because next command is another move */
@@ -260,8 +258,8 @@ module.exports = {
 
 		for (var i = 0; i < M.length; i++) {
 			
-			if (M[i+1] && M[i+1].MobProtoId == M[i].MobProtoId) {
-				n++; /* stack mobs with same proto id */
+			if (M[i+1] && M[i+1].MobProtoId == M[i].MobProtoId) { /* stack mobs with same proto id */
+				n++; 
 				continue;
 			}
 			
