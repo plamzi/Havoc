@@ -742,6 +742,17 @@ module.exports = {
 		delete ch.temp.quiz, delete ch.temp.quest;	
 	},
 	
+	purgeProps: function(ch, qid) {
+		
+		var M = ch.getMobsAt();
+		
+		for (var i in M)
+			if (M[i].attr.quest && M[i].attr.CharId && M[i].attr.CharId == ch.id)
+				char.destroy(M[i]);
+		
+		
+	},
+	
 	create: function(o, cb) { /* create a quest summary record in Quests table from a quest plugin / file */
 		
 		debug('quest.create');

@@ -217,8 +217,9 @@ module.exports = {
 		/* first entry to Apothecary, ambush */
 		if (vict.hasQuest(1, 'stage 1')) {
 
-			vict.alterItem('a cinder sigil', { name: 'a glowing cinder sigil' });
-			vict.send(my().Q1_SIGIL_GLOW);
+			vict
+			.alterItem('a cinder sigil', { name: 'a glowing cinder sigil' })
+			.send(my().Q1_SIGIL_GLOW);
 
 			quest.createMob(vict, 'Serip', vict.at, quest[1], function(mob) {
 				quest.say(mob, vict, my().Q1_SEIZE_THE_TRAITOR, quest[1]);
