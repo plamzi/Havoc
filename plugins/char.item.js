@@ -128,7 +128,7 @@ module.exports = {
 		var ch = this;
 		
 		if (!ch.canEquip(it, my().VERBOSE))
-			return;
+			return thia;
 		
 		for (var i = 0; i < ch.items.length; i++)
 			if (ch.items[i].location == 'worn' && ch.items[i].position == it.position)
@@ -159,24 +159,22 @@ module.exports = {
 		if (ch.npc())
 			return;
 			
-		item.create("The Adventurer's Guide to Calandor", function(it) {
-			ch.take(it);
-		});
-			
 		if (ch.pref('kit'))
 			return log('has starter kit', ch.s);
 		
-		var cb = function(it) {
-			ch.take(it, function() {
-				ch.equip(it);
+		var _equip = function(it) { 
+			ch.take(it, function() { 
+				if (ch.canEquip(it, my().SILENT))
+					ch.equip(it); 
 			});
 		};
 		
-		item.create('a plain shield', cb);
-		item.create('a simple dagger', cb);
-		item.create('a leather jerkin', cb);
-		item.create('a simple red potion', cb);
-
+		item.create('a plain shield', _equip);
+		item.create('a simple dagger', _equip);
+		item.create('a leather jerkin', _equip);
+		item.create('a simple red potion', _equip);
+		item.create("The Adventurer's Guide to Calandor", _equip);
+				
 		/* set starting gold */
 		if (!ch.getGold())
 			ch.setGold(50);
@@ -221,8 +219,10 @@ module.exports = {
 	},
 	
 	hasItem: function(name) {
+		
 		if (typeof name == 'number')
 			return this.hasItemId(name);
+		
 		return (this.items.filter(function(i) { return i.name == name; }).length);
 	},
 

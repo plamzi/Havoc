@@ -327,9 +327,17 @@ module.exports = {
 			return;
 
 		ch.items.sort(function(a, b) {
+			
 			if (a.location == b.location)
-				return a.name < b.name;
-			return a.location < b.location;
+				return by_name(a, b);
+			
+			if (a.location < b.location) 
+				return -1;
+			
+			if (a.location > b.location) 
+				return 1;
+			
+			return 0;
 		})
 		.forEach(function(it, i) {
 

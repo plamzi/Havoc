@@ -337,7 +337,7 @@ module.exports = {
 	},
 	
 	initChar: function(ch, re) {
-		
+
 		if (!re) {
 			/* turn all ch instances into event emitters */
 			ch.__proto__.__proto__.__proto__ = events.EventEmitter.prototype;
