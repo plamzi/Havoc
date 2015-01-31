@@ -480,6 +480,10 @@ module.exports = {
 		});
 	},
 	
+	destroy: function() {
+		this.destroyMob.apply(this, arguments);
+	},
+	
 	/* resets certain properties of a mob instance to the values of their prototype, useful during rapid content creation cycles */
 
 	resetMob: function(ch) {

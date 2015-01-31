@@ -33,6 +33,7 @@ error = function(msg, s) {
 };
 
 warning = function(msg, s) {
+	if (config.server.loglevel == 'high')
 	return log('warning: '.color('&y') + msg, s); 
 };
 
@@ -174,7 +175,7 @@ define(Array, "add", function(a) {
 	if (!this.has(a))
 		this.push(a);
 	else 
-		error('util.add detected duplicate!');
+		warning('util.add detected duplicate!');
 	return this;
 });
 

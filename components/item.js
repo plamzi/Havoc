@@ -242,6 +242,8 @@ module.exports = {
 		
 		/* give them the basic instance methods of items */
 		point(it, item.instanceMethods);
+
+		my().items.add(it);
 		
 		if (it.location == 'ground') {
 			if (!world.getItems(it.at).has(it))
@@ -285,8 +287,7 @@ module.exports = {
 
 		o.ItemProtoId = o.id, delete o.id;
 		
-		Item.create(o).success(function (it) { 
-			my().items.add(it);
+		Item.create(o).then(function (it) { 
 			item.initItem(it);
 			!cb || cb(it); 
 		});
@@ -300,9 +301,9 @@ module.exports = {
 		
 		debug('item.destroyItem');
 		
-		my().items.remove(ch);
+		my().items.remove(it);
 		
-		it.destroy().success(function() {
+		it.destroy().then(function() {
 			!cb || cb();
 		});
 	},

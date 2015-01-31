@@ -540,15 +540,15 @@ module.exports = {
 				quest: q.id,
 				CharId: ch.id
 			});
-		
-			it
-			.updateAttributes({ at: clone(at) })
-			.success(function() {
-				my().items.add(it);
-				item.toGround(it);
-			});
 			
-			!cb || cb(it);
+			it.updateAttributes({
+				at: at,
+				location: 'ground'
+			})
+			.then(function() {
+				item.initItem(it);
+				!cb || cb(it);
+			});
 		});	
 		
 		return this;
@@ -563,8 +563,9 @@ module.exports = {
 		
 		var o = mob.values;
 		o.MobProtoId = o.id, delete o.id;
+		o.at = at;
 		
-		Mob.create(o).success(function(mob) {
+		Mob.create(o).then(function(mob) {
 
 			char.initChar(mob);
 						
@@ -572,11 +573,6 @@ module.exports = {
 			mob.setAttr({
 				quest: q.id,
 				CharId: ch.id
-			});
-			
-			/* this is the method of sequelize, different from setAttr */
-			mob.setAttributes({ 
-				at: at
 			});
 			
 			!cb || cb(mob);
@@ -676,7 +672,8 @@ module.exports = {
 	    	if (penalty == 'skip') {
 	    		ch_q.updateAttributes({
 	    			attr: { step: ++step }
-	    		}).success(function() {
+	    		})
+	    		.then(function() {
 	    			quest.quiz(ch, quiz, q);
 	    		});
 	    		return my().HANDLED;
@@ -685,7 +682,8 @@ module.exports = {
 			if (penalty == 'fail') {
 	    		ch_q.updateAttributes({
 	    			status: 'failed'
-	    		}).success(function() {
+	    		})
+	    		.then(function() {
 	    			quest.quiz(ch, quiz, q);
 	    		});
 	    		return my().HANDLED;
@@ -714,7 +712,8 @@ module.exports = {
 			ch_q.updateAttributes({
 				attr: { step: ++step },
 				status: 'completed' /* note that we keep track of the step they reached. if more steps are added later, players would be able to continue */
-			}).success(function() {
+			})
+			.then(function() {
 				ch.send(my().QUEST_QUIZ_COMPLETED);
 			});
 					
@@ -723,7 +722,8 @@ module.exports = {
 			
 		ch_q.updateAttributes({
 			attr: { step: ++step }
-		}).success(function() {
+		})
+		.then(function() {
 			quest.quiz(ch, quiz, q);
 		});
 
@@ -742,7 +742,7 @@ module.exports = {
 		delete ch.temp.quiz, delete ch.temp.quest;	
 	},
 	
-	purgeProps: function(ch, qid) {
+	purgePropsAt: function(ch, qid) {
 		
 		var M = ch.getMobsAt();
 		
@@ -750,6 +750,11 @@ module.exports = {
 			if (M[i].attr.quest && M[i].attr.CharId && M[i].attr.CharId == ch.id)
 				char.destroy(M[i]);
 		
+		var I = ch.getItemsAt();
+		
+		for (var i in I)
+			if (I[i].attr.quest && I[i].attr.CharId && I[i].attr.CharId == ch.id)
+				item.destroy(I[i]);
 		
 	},
 	
