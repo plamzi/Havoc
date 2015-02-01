@@ -76,7 +76,7 @@ var pm = function(s, cmd, d) {
 	
 	s.pm.text = d;
 	
-	Message.create(s.pm).success(function() {
+	Message.create(s.pm).then(function() {
 		
 		var usr = my().userindex[s.pm.to_id];
 		
@@ -195,7 +195,7 @@ module.exports = {
 		Char.find({
 			where: { name: d, UserId: s.user.id }
 		})
-		.success(function(r) {
+		.then(function(r) {
 			
 			if (!r) {
 				
@@ -240,7 +240,8 @@ module.exports = {
 
 		debug('user.changeEmail: ' + stringify(d));
 		
-		s.user.updateAttributes({ email: d }).success(function() {
+		s.user.updateAttributes({ email: d })
+		.then(function() {
 			user.lobby(s);
 		});
 	},
@@ -290,9 +291,8 @@ module.exports = {
 		if (s.password != d)
 			return user.lobby(s, my().PASSWORDS_DIFFER);
 		
-		s.user
-		.updateAttributes({ password: md5(d) })
-		.success(function() {
+		s.user.updateAttributes({ password: md5(d) })
+		.then(function() {
 			user.lobby(s, my().PASSWORD_CHANGED);
 		});
 	},
@@ -453,7 +453,7 @@ module.exports = {
 			 
 			Message.find(arg[1])
 			.then(function(r){
-				r.destroy().success(function() {
+				r.destroy().then(function() {
 					return user.showInbox(s, 'start', my().MESSAGE_DELETED);
 				});
 			});
@@ -624,7 +624,7 @@ module.exports = {
 		Char.find({
 			where: { name: d.cap() }
 		})
-		.success(function(r) {
+		.then(function(r) {
 			
 			if (r)
 				return user.charPromptName(s, 'start', u.format(my().CHAR_X_EXISTS, d));
