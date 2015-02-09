@@ -285,7 +285,7 @@ module.exports = {
 		if (!o)
 			return error('item.createItem could not locate proto for: ' + stringify(o));	
 
-		o.ItemProtoId = o.id, delete o.id;
+		o.ItemProtoId = o.id, delete o.id, delete o.createdAt, delete o.updatedAt;
 		
 		Item.create(o).then(function (it) { 
 			item.initItem(it);

@@ -504,10 +504,11 @@ module.exports = {
 		if (!vict)
 			vict = ch.findActor(arg.join(' '), 'at-vis');
 
-		if (!vict && ch.imp())
+		if (!vict)
 			vict = ch.findActor(arg[0], 'world');
 		
-		_stat(ch, vict);
+		if (vict)
+			_stat(ch, vict);
 	},
 
 	identify: function(arg, mode) {
