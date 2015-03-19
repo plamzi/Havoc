@@ -65,7 +65,8 @@ module.exports = {
 			my().wsserver = new ws({
 				httpServer: my().wserver,
 				autoAcceptConnections: false,
-				keepalive: true
+				keepalive: true,
+				dropConnectionOnKeepaliveTimeout: false
 			})
 			.on('request', server.initWebSocket);
 		});
