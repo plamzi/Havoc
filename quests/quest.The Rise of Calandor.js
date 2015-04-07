@@ -4,7 +4,7 @@ addStrings({
 	
 	eng: {
 
-		Q2_YOU_FEEL_LESS_BOOKSMART: "You feel book-smart.",
+		Q2_YOU_FEEL_BOOKSMART: "You feel book-smart.",
         
 		Q2_YOU_FEEL_LESS_BOOKSMART: "You feel less book-smart.",
         

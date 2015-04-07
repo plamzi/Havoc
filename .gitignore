@@ -214,3 +214,6 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+
+# Node.js dependencies from npm
+node_modules/
