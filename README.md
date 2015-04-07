@@ -59,6 +59,13 @@ https://github.com/joyent/node
 ```
 git clone https://github.com/plamzi/Havoc
 ```
+
+* Install node.js dependencies from npm:
+```
+cd clone
+npm install
+```
+
 * Modify config.js to include your SQL server credentials. If you are not using MySQL for storage (recommended), you will need to modify the dialect and port settings as well. For example:
 ```
     db: {
