@@ -1,0 +1,42 @@
+{
+  "name": "havoc",
+  "version": "1.0.0",
+  "description": "Web MMO Server Engine",
+  "main": "havoc.js",
+  "dependencies": {
+    "MD5": "^1.2.1",
+    "codebox": "^0.8.1",
+    "express-admin": "^1.2.5",
+    "jsdom": "^4.0.4",
+    "mysql": "^2.6.1",
+    "node-eden": "^0.0.3",
+    "nodemailer": "^1.3.0",
+    "nodemailer-sendmail-transport": "^1.0.0",
+    "sequelize": "^2.0.5",
+    "tail": "^0.4.0",
+    "websocket": "^1.0.10"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "./node havoc.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/plamzi/Havoc"
+  },
+  "keywords": [
+    "MMO",
+    "MMORPG",
+    "Server",
+    "Game",
+    "Engine",
+    "Web",
+    "Social"
+  ],
+  "author": "plamzi@gmail.com",
+  "license": "GPLv2",
+  "bugs": {
+    "url": "https://github.com/plamzi/Havoc/issues"
+  },
+  "homepage": "https://github.com/plamzi/Havoc"
+}
