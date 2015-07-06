@@ -3,7 +3,7 @@
 /* Havoc (c) 2013-2014 */
 
 process.chdir(__dirname);
-
+ 
 /* built-in modules */
 var u = require('util');
 var net = require('net');
@@ -16,8 +16,8 @@ var events = require('events');
 var tail = require('tail').Tail;
 
 /* special cases: utility functions and the config file */
-require('./util');
 require('./config');
+require('./util');
 
 var re = exists(global.havoc); /* yes, my friends, global havoc may already exist */
 
@@ -38,13 +38,15 @@ havoc = {
 
 	quests: fs.readdirSync('./quests').filenames(),
 	
-	init: function() { /* should be called only on engine boot-up */
+	init: function() { /* at this time, init should be called only on engine boot-up */
 		
 		console.log('havoc engine init');
 
 		this.loadLanguages();
 		this.loadComponents();
 	
+		console.log('havoc emitting init');
+		
 		/* some component listeners will be waiting here for all other components to init */
 		havoc.emit('init');
 		
@@ -103,7 +105,7 @@ havoc = {
  
 	loadComponents: function() {
 
-		log('detected component files: ' + this.components.join(', '));
+		log('detected component files: %s', this.components.join(', '));
 
 		for (var i in this.components)
 			this.loadComponent(this.components[i]);
@@ -114,7 +116,7 @@ havoc = {
 
 	loadComponent: function(a) {
 		
-		log('havoc.loadComponent: ' + a);
+		log('havoc.loadComponent: %s', a);
 		
 		var f = './components/' + a + '.js', re = exists(global[a]);
 		
@@ -126,7 +128,9 @@ havoc = {
 	    global[a].__proto__ = events.EventEmitter.prototype;
 	    global[a]._events = _events;
 		global[a]._registered = _registered;
-
+		
+		global[a].setMaxListeners(100);
+		 
 	    log((re?'re-':'')+'loaded component: ' + a.color('&155') + ' ' + Object.keys(global[a]).join(', '));
 		
 		if (re)
@@ -148,14 +152,14 @@ havoc = {
  	
 	loadScript: function(a) {
 
-		log('attempting to load script: ' + a);
+		log('attempting to load script: %s', a);
 
 		var f = './' + a;
 
 	    delete require.cache[require.resolve(f)];
 	    require(f);
 	    
-		log('(re-)loaded script: ' + a.color('&155'));
+		log('(re-)loaded script: %s', a.color('&155'));
 	},
 	
 	/* each quest is basically a plugin, but we want to organize them in their own folder */

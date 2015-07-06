@@ -21,7 +21,7 @@ addStrings({
 	eng: {
 		
 		USERNAME:			("Press " + "reset".mxpsend() + " to request a password reset email.\r\nPress " + "token".mxpsend() + " if you already have one.").style(11, "&Ki") + "\r\nEnter new or existing username: ",
-		USERPROMPT_INFO:	"To create a new account, enter a desired username and leave password field blank.",
+		USERPROMPT_INFO:	"To create a &dnew account&n, enter a desired username and leave the password field &dblank&n.".colorize(),
 		USERNAME_PROMPT:	"Enter new or existing username: ",
 		PASSWORD:			"Password: ",
 		AUTH_FAIL:			"Invalid password. Try again: ",
@@ -68,9 +68,13 @@ addStrings({
 });
 
 var user_struct = {
+		
 	name: Seq.STRING,
+	
 	password: Seq.STRING,
+	
 	email: Seq.STRING,
+	
 	attr: {
 		type: Seq.TEXT,
 		get: function() {
@@ -79,8 +83,10 @@ var user_struct = {
 		set: function(v) {
 			this.setDataValue('attr', stringify(v));
 		},
-		defaultValue: { pref: {}, role: 'player' }
+		allowNull: false
+		//defaultValue: { pref: {}, role: 'player' }
 	},
+	
 	points: {
 		type: Seq.TEXT,
 		get: function() {
@@ -98,6 +104,7 @@ module.exports = {
 	init: function(re) {
 		
 		debug('user.init');
+		
 		server.register('user', 'request', user.welcome);
 
 		server.register('user', 'end', function(s) {
@@ -112,10 +119,8 @@ module.exports = {
 		havoc.register('user', 'init', function() {
 			
 			User = db.define('Users', user_struct);
-			
-			User.sync().then(function() {
-				user.emit('init');
-			});
+			//db.debug(1);
+			user.emit('init');
 		});
 		
 		havoc.register('user', 'plugin.change', user.reloadPlugin);
@@ -128,7 +133,7 @@ module.exports = {
 		log('user.initPlugins');
 		
 		var plugins = fs.readdirSync('./plugins').filter(function(i) { return i.match(/^user\..+\.js/i); });
-		info('user component detected plugins: ' + plugins.join(', '));
+		log('user component detected plugins: ' + plugins.join(', '));
 		
 		for (var i in plugins) {
 
@@ -143,7 +148,7 @@ module.exports = {
 			/* 	user plugins are not just extensions to the user instance, so we let each plugin
 				decide where they want to go in their init method */
 				
-			info('loaded: ' + f.color('&155') + ' ' + Object.keys(p).join(', ').font('size=10'));
+			log('loaded: ' + f.color('&155') + ' ' + Object.keys(p).join(', ').font('size=10'));
 		}
 	},
 
@@ -407,7 +412,7 @@ module.exports = {
 		
 		s.next = user.email;
 		
-		if (s.portal && !s.gui)
+		if (s.portal)
 			s.sendGMCP('ModalInput', {
 				title: my().PROMPT_EMAIL,
 				info: my().EXPLAIN_EMAIL,

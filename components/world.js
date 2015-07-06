@@ -63,7 +63,7 @@ var portal_struct = {
 			this.setDataValue('attr', stringify(v));
 		},
 		
-		defaultValue: {}
+		//defaultValue: {}
 	}
 };
 

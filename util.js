@@ -4,28 +4,33 @@ var events = require('events');
 var u = require('util');
 
 log = function(msg, s) {
+
 	var t = (new Date()).toString();
-	t = (t.substr(0, 11) + t.substr(16, 8)).color('&K');
-	if (s) {
-		msg = u.format(
-			t + ' %s %s',
-			(s.user ? (s.ch ? (s.user.name + ' / ' + s.ch.name) : s.user.name) : s.remoteAddress) + ' ', 
-			msg
+	t = t.substr(0, 11) + t.substr(16, 8);
+
+	if (msg.has('%'))
+		msg = u.format.apply(this, arguments);
+	
+	if (s && s.remoteAddress) {
+		
+		console.log(
+			t + ' '
+			+ (s.user ? (s.ch ? (s.user.name + ' / ' + s.ch.name) : s.user.name) : s.remoteAddress) + ' ' 
+			+ msg.colorize()
 		);
-		console.log(msg.colorize());
 	}
 	else
-		console.log((t + ' ' + msg).colorize());
+		console.log(t + ' ' + msg.colorize());
 };
 
 info = function(msg, s) {
-	if (config.server.loglevel == 'high')
-	return log(msg.color('&K'), s); 
+	//if (config && config.server.loglevel == 'high')
+	return log('info: '.color('&B') + msg, s); 
 };
 
 debug = function(msg, s) {
-	if (['medium', 'high'].has(config.server.loglevel))
-	return log(msg.color('&g'), s); 
+	//if (config && ['medium', 'high'].has(config.server.loglevel))
+	return log('debug: '.color('&g') + msg, s); 
 };
 
 error = function(msg, s) {
@@ -33,7 +38,7 @@ error = function(msg, s) {
 };
 
 warning = function(msg, s) {
-	if (config.server.loglevel == 'high')
+	//if (config && config.server.loglevel == 'high')
 	return log('warning: '.color('&y') + msg, s); 
 };
 
@@ -48,12 +53,12 @@ ansi = function(str, color) {
 	if (/(&[a-zA-Z])/.test(str)) {
 		for (var c in my().ANSI) {
 			var re = new RegExp(c, 'g');
-			str = color?str.replace(re, my().ANSI[c]):str.replace(re, '');
+			str = color ? str.replace(re, my().ANSI[c]) : str.replace(re, '');
 		}
 	}
 	
 	if (/&([0-9]+)/.test(str))
-		str = color?str.replace(/&([0-9]+)/ig, '\033[38;5;$1m'):str.replace(re, '');
+		str = color ? str.replace(/&([0-9]+)/ig, '\033[38;5;$1m') : str.replace(re, '');
 	
 	return str;
 };

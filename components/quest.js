@@ -95,8 +95,7 @@ var char_quest_struct = {
 		},
 		set: function(v) {
 			this.setDataValue('attr', stringify(v));
-		},
-		defaultValue: {}
+		}
 	}
 };
 
@@ -129,16 +128,11 @@ module.exports = {
 		//MobProto.hasMany(Quest, { through: 'MobQuests' });
 		//ItemProto.hasMany(Quest, { through: 'ItemQuests' });
 		
-		Quest.sync()
-		.then(function() {
-			return Char.sync();
-		})
-		.then(function() {
-			return CharQuest.sync();
-		})
-		.then(function() {
-			return Quest.findAll();
-		})
+		//Quest.sync();
+		//Char.sync();
+		//CharQuest.sync();
+		
+		Quest.findAll()
 		.then(function(r) {
 			
 			my().quests = {};
@@ -191,7 +185,7 @@ module.exports = {
 			var cb = function(q) {
 				return function(Q) {
 					if (Q && Q.save)
-						Q.updateAttributes(q).success(function() { 
+						Q.updateAttributes(q).then(function() { 
 							info('updated existing quest summary: ' + q.name);
 						}); 
 					else
@@ -456,7 +450,7 @@ module.exports = {
 		};
 		
 		Quest.find(by).then(function(q) {
-			ch.addQuest(q, o).success(function(q) {
+			ch.addQuest(q, o).then(function(q) {
 				
 				debug('quest.addChar: ' + ch.name + " +quest " + q.name);
 				
@@ -481,7 +475,7 @@ module.exports = {
 			by = qname; /* find by id */
 			
 		Quest.find(by).then(function(q) {
-			ch.removeQuest(q).success(function() {
+			ch.removeQuest(q).then(function() {
 				ch.quests.remove(q);
 				log('quest.removeChar: ' + ch.name + " -quest " + q.name);
 				!cb || cb(q);
@@ -765,7 +759,7 @@ module.exports = {
 		if (!cb)
 			log('quest.create called with no callback');
 		
-		Quest.create(o).success(function(q) { !cb || cb(q); });
+		Quest.create(o).then(function(q) { !cb || cb(q); });
 		return this;
 	},
 

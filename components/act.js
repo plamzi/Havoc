@@ -3,20 +3,20 @@
 var fs = require('fs');
 var u = require('util');
 var path = require('path');
-
+ 
 module.exports = {
-	
+
 	init: function(re) {
 	
 		log('act.init');
-		
+
 		havoc.register('act', 'plugin.change', this.reloadPlugin);
 		char.register('act', 'enter', this.initChar);
 		
 		this.initPlugins(re);
 		this.emit('init');
 	},
- 
+
 	initPlugins: function(re) {
 	
 		var plugins = fs.readdirSync('./plugins').filter(function(i) { return i.match(/^act\..+\.js/i); });
@@ -49,6 +49,9 @@ module.exports = {
 		
 		for (var i in act) {
 			
+			if (!act[i])
+				continue;
+			
 			if (act[i] instanceof Function || i[0] == '_')
 				continue;
 			
@@ -80,7 +83,7 @@ module.exports = {
 
 			char.emit('exit', ch);
 			
-			ch.stop().save().success(function() {
+			ch.stop().save().then(function() {
 				if (ch.s)
 					user.lobby(ch.s);
 			});

@@ -52,7 +52,8 @@ var char_struct = {
 };
 
 var char_attr_default = {
-	pref: {}, aff: {}
+	pref: {}, 
+	aff: {}
 };
 
 var char_points_default = {
@@ -103,9 +104,14 @@ module.exports = {
 		char.initPlugins(re);
 		
 		user.register('char', 'init', function() {
+			log('char received init from user');
 			char.initDB();
 		});
 
+		item.register('char', 'init', function() {
+			char.initMobInstances();
+		});
+		
 		if (re)
 			char.initDB(re);
 	},
@@ -130,8 +136,8 @@ module.exports = {
 		debug('char.initDB');
 
 		Char = db.define('Chars', char_struct);
-		Mob = db.define('Mobs', char_struct, { timestamps: 0 });
 		MobProto = db.define('MobProto', char_struct);
+		Mob = db.define('Mobs', char_struct, { timestamps: 0 });
 		Proc = db.define('Procs', proc_struct, { timestamps: 0 });
 		ProcLink = db.define('ProcLinks', proc_link_struct, { timestamps: 0 });
 		
@@ -144,54 +150,22 @@ module.exports = {
 		MobProto.hasMany(Mob);
 		Mob.belongsTo(MobProto);
 		
-		MobProto.hasMany(Proc, { as: 'procs', through: 'ProcLinks' });
-		Proc.hasMany(MobProto, { through: 'ProcLinks' });
-
-		/* future ability to proc PC's. we can use this for advanced behavior automation e. g. */
-		Char.hasMany(Proc, { as: 'procs', through: 'ProcLinks' });
-		Proc.hasMany(Char, { through: 'ProcLinks' });
+		MobProto.belongsToMany(Proc, { through: ProcLink, as : 'procs' });
+		Proc.belongsToMany(MobProto, { through: ProcLink });
 		
-		User.sync()
-		.then(function() {
-			return Char.sync();
-		})
-		.then(function() {
-			return Proc.sync();
-		})
-		.then(function() {
-			return ProcLink.sync();
-		})
-		.then(function() {
-			return MobProto.sync();
-		})
-		.then(function() {
-			return Mob.sync();
-		})
-		.then(function() {
-			return MobProto.findAll({
-				include: [{ model: Proc, as: "procs" }]
-			});
-		})
-		.then(function(r) {
-			
-			var mp = my().mobproto = {};
+		/* future ability to proc PC's. we can use this for advanced behavior automation e. g. */
+		//Char.belongsToMany(Proc, { as: 'procs', through: ProcLink });
+		//Proc.belongsToMany(Char, { through: ProcLink });
 
-			for (var i in r)
-				mp[r[i].id] = r[i];
-			
-			info('char.init: finished indexing my().mobproto: '+Object.keys(mp).length);
-			
-			char.initMobInstances();
-			char.emit('init'); /* item is listening for char init */
-		});
+		char.emit('init'); /* item is listening for char init */
 	},
 
 	initPlugins: function(re) {
 
 		debug('char.initPlugins');
-		
+
 		var plugins = fs.readdirSync('./plugins').filter(function(i) { return i.match(/^char\..+\.js$/i); });
-		info('char component detected plugins: ' + plugins.join(', '));
+		log('char component detected plugins: ' + plugins.join(', '));
 		
 		for (var i in plugins) {
 
@@ -204,7 +178,7 @@ module.exports = {
 				p.init(re), delete p.init;
 	
 			point(char.instanceMethods, p);
-			info('loaded: ' + f.color('&155') + ' ' + Object.keys(p).join(', ').font('size=10'));
+			log('loaded: ' + f.color('&155') + ' ' + Object.keys(p).join(', ').font('size=10'));
 		}
 		
 		if (re)
@@ -222,14 +196,9 @@ module.exports = {
 	
 	initMobInstances: function() {
 		
-		Mob.sync()
-		.then(function() {
-			if (Item)
-				return Mob.findAll({
-					include: [{ model: Item, as: 'items', order: "location" }]
-				});
-			else
-				return Mob.findAll();
+		//Mob.sync();
+		Mob.findAll({
+			include: [{ model: Item, as: 'items', order: "location" }]
 		})
 		.then(function(r) {
 			
@@ -294,7 +263,7 @@ module.exports = {
 			UserId: s.user.id,
 			GuildId: s.user.attr.guild ? s.user.attr.guild.id : null
 		})
-		.success(function(ch) {
+		.then(function(ch) {
 			s.user.getChars().then(function(r) {
 				s.user.chars = r;
 				char.emit('create.pc', ch);
@@ -341,7 +310,7 @@ module.exports = {
 		if (!re) {
 			/* turn all ch instances into event emitters */
 			ch.__proto__.__proto__.__proto__ = events.EventEmitter.prototype;
-	
+			ch.setMaxListeners(100);
 			/* shim the default event emit method so we can chain it */
 			ch._emit = ch.emit;
 		}
@@ -430,7 +399,7 @@ module.exports = {
 				o.at = world.getRandomByTerrain(o.at);
 		}
 
-		Mob.create(o).success(function(ch) {
+		Mob.create(o).then(function(ch) {
 			my().mobs.push(ch);
 				char.initChar(ch);
 				char.initProcs(ch);
@@ -466,7 +435,7 @@ module.exports = {
 				
 				if (ch.unique())
 					info(p.name + ' proc.' + p.type + ' added to unique mob: ' + ch.name);
-				
+
 			} catch(ex) {
 				warning(ex);
 			}
@@ -475,7 +444,7 @@ module.exports = {
 	
 	destroyMob: function(ch, cb) {
 		my().mobs.remove(ch);
-		ch.fromRoom().destroy().success(function() {
+		ch.fromRoom().destroy().then(function() {
 			!cb || cb();
 		});
 	},

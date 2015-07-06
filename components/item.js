@@ -55,8 +55,7 @@ var item_struct = {
 		},
 		set: function(v) {
 			this.setDataValue('attr', stringify(v));
-		},
-		defaultValue: {}
+		}
 	},
 
 	affects: {
@@ -120,14 +119,14 @@ module.exports = {
 		ItemProto.hasMany(Item);
 		Item.belongsTo(ItemProto);
 		
-		ItemProto.hasMany(Proc, { as: 'procs', through: 'ProcLinks' });
-		Proc.hasMany(ItemProto, { through: 'ProcLinks' });
-		
+		ItemProto.belongsToMany(Proc, { as: 'procs', through: ProcLink });
+		Proc.belongsToMany(ItemProto, { through: ProcLink });
+
 		Char.hasMany(Item, { as: 'items' });
 		Item.belongsTo(Char);
 		
 		Item.belongsTo(User); /* shared storage */
-		
+
 		Mob.hasMany(Item, { as: 'items' });
 		Item.belongsTo(Mob);
 		
@@ -136,57 +135,61 @@ module.exports = {
 		 * MobProto.hasMany(ItemProto, { as: 'items' });
 		 * ItemProto.belongsTo(MobProto); 
 		 */
-		
-		User.sync()
-		.then(function() {
-			return Proc.sync();
-		})
-		.then(function() {
-			return Item.sync();
-		})
-		.then(function() {
-			return ItemProto.sync();
-		})
-		.then(function() {
-			return Char.sync();
-		})
-		.then(function() {
-			return Mob.sync();
-		})
-		.then(function() {
-			return ItemProto.findAll({
-				include: [{ model: Proc, as: "procs" }]
+		//db.debug(1);
+
+		db.conn().sync().done(function() {
+
+			MobProto.findAll({
+				include: { all: true }
+			}).then(function(r) {
+			
+				var mp = my().mobproto = {};
+	
+				for (var i in r)
+					mp[r[i].id] = r[i];
+				
+				info(' char.init: finished indexing my().mobproto: ' + Object.keys(mp).length);
+				
+			});
+
+			ItemProto.findAll({
+				include: { all: true }
+			})
+			.then(function(r) {
+				
+				my().itemproto = {};
+			
+				for (var i in r)
+					my().itemproto[r[i].id] = r[i];
+
+				info(' item.init: finished indexing item prototypes: ' + Object.keys(my().itemproto).length);
+				item.updateProcs(); /* item proto may finish loading after some instances have entered the game */
+				
+				return Item.findAll();
+			})
+			.then(function(r) {
+				
+				my().items = r;
+				info(' item.init: Finished loading item instances: ' + r.length);
+
+				for (var i in r)
+					item.initItem(r[i]);
+				
+				info(' item.init: Finished instancing and placing ground items.');
+				item.emit('init');
+
+				db.debug(0);
 			});
 		})
-		.then(function(r) {
-			
-			my().itemproto = {};
-		
-			for (var i in r)
-				my().itemproto[r[i].id] = r[i];
-
-			info('item.init: finished indexing item prototypes: ' + Object.keys(my().itemproto).length);
-			item.updateProcs(); /* item proto may finish loading after some instances have entered the game */
-			
-			return Item.findAll();
-		})
-		.then(function(r) {
-			
-			my().items = r;
-			info('item.init: Finished loading item instances: ' + r.length);
-
-			for (var i in r)
-				item.initItem(r[i]);
-			
-			info('item.init: Finished instancing and placing ground items.');
-			item.emit('init');
+		.catch(function(err) {
+			dump(err);
 		});
 	},
 	
 	initPlugins: function() {
 
 		var plugins = fs.readdirSync('./plugins').filter(function(i) { return i.match(/^item\..+\.js$/i); });
-		info('item.initPlugins detected: ' + plugins.join(', '));
+		info(' item.initPlugins detected: ' + plugins.join(', '));
 		
 		for (var i in plugins) {
 	
@@ -223,7 +226,7 @@ module.exports = {
 		for (var i in procs) {
 			try {
 				var p = procs[i];
-				it.register('item' + it.ItemProtoId, 'proc.' + p.type, eval('('+p.func + ')'));
+				it.register(' item' + it.ItemProtoId, 'proc.' + p.type, eval('('+p.func + ')'));
 			} catch(ex) {
 				warning(ex);
 			}
@@ -235,7 +238,7 @@ module.exports = {
 		if (!re) {
 			/* turn all item instances into event emitters */
 			it.__proto__.__proto__.__proto__ = events.EventEmitter.prototype;
-			
+			it.setMaxListeners(100);
 			/* shim the default event emit method so we can chain it */
 			it._emit = it.emit;
 		}
@@ -243,8 +246,6 @@ module.exports = {
 		/* give them the basic instance methods of items */
 		point(it, item.instanceMethods);
 
-		my().items.add(it);
-		
 		if (it.location == 'ground') {
 			if (!world.getItems(it.at).has(it))
 				item.toGround(it);
@@ -259,7 +260,7 @@ module.exports = {
 	
 	updateProcs: function() {
 
-		info('item.updateProcs: re-init procs on existing online items');
+		info(' item.updateProcs: re-init procs on existing online items');
 
 		var a = my().items;
 
@@ -272,7 +273,7 @@ module.exports = {
 		debug('item.createItem');
 		
 		if (!cb)
-			warning('item.create called with no callback!');
+			warning(' item.create called with no callback!');
 		
 		if (typeof o == 'string' && !o.isnum())
 			o = item.protoByName(o);

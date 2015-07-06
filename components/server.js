@@ -155,6 +155,7 @@ module.exports = {
 
 		log('(ws): new connection', s);
 		server.emit('request', s);
+		process.memoryUsage();
 	},
 	
 	/* Executed when client disconnects or is disconnected from either server */
