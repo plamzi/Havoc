@@ -137,7 +137,7 @@ module.exports = {
 		 */
 		//db.debug(1);
 
-		db.conn().sync().done(function() {
+		db.conn().sync().then(function() {
 
 			MobProto.findAll({
 				include: { all: true }
@@ -180,9 +180,6 @@ module.exports = {
 
 				db.debug(0);
 			});
-		})
-		.catch(function(err) {
-			dump(err);
 		});
 	},
 	
@@ -349,7 +346,7 @@ module.exports = {
 				item.create(proto.id, cb);			
 			}
 			else 
-			ItemProto.create(o).success(function(proto) {
+			ItemProto.create(o).then(function(proto) {
 				log('item.craft created new proto item: ' + proto.name + '. new id: ' + proto.id);
 				my().itemproto[proto.id] = proto;
 				item.create(proto.id, cb);

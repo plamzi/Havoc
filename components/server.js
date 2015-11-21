@@ -153,7 +153,9 @@ module.exports = {
 			server.closeSocket(s);
 		});
 
-		log('(ws): new connection', s);
+		log('(ws): new connection, assuming portal client', s);
+		s.portal = 1; /* for now, let's assume portal client on websocket */
+
 		server.emit('request', s);
 		process.memoryUsage();
 	},

@@ -392,7 +392,7 @@ module.exports = {
 				
 				for (var i in r) {
 					if (name == r[i].attr.guild.name)
-						r[i].destroy().success(function() {
+						r[i].destroy().then(function() {
 							ch.send(u.format(my().GUILD_YOU_DECLINED_AN_INVITATION_FROM_X, name));
 						});	
 				}
@@ -565,7 +565,7 @@ module.exports = {
 		ch.guild.updateAttributes({
 			attr: attr
 		}, ['attr'])
-		.success(function() {
+		.then(function() {
 			var ss = my().sockets;
 			for (var i in ss)
 				if (ss[i].ch && ch.isGuildiesWith(ss[i].ch))

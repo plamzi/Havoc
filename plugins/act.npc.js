@@ -1,3 +1,5 @@
+/* private methods for automated NPC behaviors */
+
 var u = require('util');
 
 addStrings({
@@ -9,7 +11,6 @@ addStrings({
 
 var pulse = {};
 
-/* private methods for automated behavior */
 pulse.roam = function() {
 	
 	if (!this.isNearPlayers())
@@ -37,7 +38,7 @@ module.exports = {
 
 	requires: function(ch) {
 	
-		/* we could return some methods here that would be used as npc-only commands */
+		/* we could return some methods here that could then be used as npc-only commands */
 		
 		return false;
 	},
@@ -46,12 +47,12 @@ module.exports = {
 		
 		char.register('act.npc', 'enter.npc', function(ch) {
 			
-			/* if npc has roam: 1 attribute, assign roaming behavior */
+			/* if npc has roam attribute, assign roaming behavior */
 			if (ch.attr.roam)
 				ch.register('act.npc', 'proc.pulse', pulse.roam);
 
-			/* assign any automated pulse behaviors based on npc trade */
-			if (module['pulse.'+ch.trade.toLowerCase()])
+			/* assign automated pulse behaviors based on npc trade */
+			if (module['pulse.' + ch.trade.toLowerCase()])
 				ch.register('act.npc', 'proc.pulse', pulse[ch.trade.toLowerCase()]);
 		});
 	}

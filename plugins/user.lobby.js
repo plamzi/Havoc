@@ -150,6 +150,7 @@ module.exports = {
 				info: err,
 				mxp: msg.replace(/\r\n/g, '\x1b<br\x1b>').colorize(),
 				closeable: 0,
+				monospace: 0,
 				backdrop: 'static',
 				buttons: [{
 					text: my().CREATE_NEW,

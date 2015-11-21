@@ -79,9 +79,9 @@ var initDB = function() {
 	Char.belongsTo(Guild, { as: 'guild' });
 	Mob.belongsTo(Guild, { as: 'guild' });
 	
-	Guild.sync();
-	Char.sync();
-	Mob.sync();
+	//Guild.sync();
+	//Char.sync();
+	//Mob.sync();
 };
 
 /* private method loading guild info on char entry */
@@ -89,12 +89,14 @@ var initDB = function() {
 var initGuildChar = function(ch) {
 	
 	/* load a character's guild info */
-	if (ch.getGuild)
-		ch.getGuild().success(function(r) {
+	if (ch.getGuild) {
+
+		ch.getGuild().then(function(r) {
 			ch.guild = r;
 			act.initChar(ch);
 		});
-		
+	}
+	
 	ch.register('char.guild', 'post.stat', function(vict) {
 		ch.send('').statGuild(vict);
 	});
@@ -119,7 +121,7 @@ module.exports = {
 		Guild.find({
 			name: name
 		})
-		.success(function(r) {
+		.then(function(r) {
 			
 			if (!r)
 				Guild.create({
@@ -127,7 +129,8 @@ module.exports = {
 					motto: motto,
 					attr: guild_attr_default,
 					points: guild_points_default
-				}).success(function(guild) {
+				})
+				.then(function(guild) {
 					
 					ch.send(u.format(my().GUILD_YOU_CREATED_X, guild.name));
 					act.initChar(ch); /* update available commands */
@@ -152,7 +155,8 @@ module.exports = {
 		
 		guild.increment({
 			members: 1
-		}).success(function() {
+		})
+		.then(function() {
 			
 			/* first member becomes leader, else set to last rank in the chain */
 			var rank = guild.members > 1 ? guild.attr.ranks.length - 1 : 0;
@@ -164,7 +168,8 @@ module.exports = {
 				}
 			});
 			
-			ch.setGuild(guild).success(function() {
+			ch.setGuild(guild)
+			.then(function() {
 				
 				if (u.chars)
 					u.chars.forEach(function(ch) {
@@ -188,11 +193,12 @@ module.exports = {
 		
 		ch.guild.decrement({
 			members: 1
-		}).success(function() {
+		})
+		.then(function() {
 			
 			u.unsetAttr('guild');
 			
-			ch.setGuild(null).success(function() {
+			ch.setGuild(null).then(function() {
 				
 				if (u.chars)
 					u.chars.forEach(function(ch) {
@@ -218,7 +224,7 @@ module.exports = {
 			name: name,
 			motto: motto
 		}, ['name', 'motto'])
-		.success(function(r) {
+		.then(function(r) {
 			
 			ch.send(u.format(my().GUILD_NAME_X_GUILD_MOTTO_Y, ch.guild.name, ch.guild.motto));
 			

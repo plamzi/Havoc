@@ -122,7 +122,7 @@ module.exports = {
 		if (!it)
 			return warning('char.quest alterItem: '  + name + ' failed ');
 		
-		it.updateAttributes(o).success(function() {
+		it.updateAttributes(o).then(function() {
 			log('char.quest alterItem success');
 			ch.do('inv');
 		});

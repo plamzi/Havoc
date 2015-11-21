@@ -18,6 +18,7 @@ var sendmailTransport = require('nodemailer-sendmail-transport');
 var transporter = mailer.createTransport(sendmailTransport());
 
 addStrings({
+	
 	eng: {
 		
 		USERNAME:			("Press " + "reset".mxpsend() + " to request a password reset email.\r\nPress " + "token".mxpsend() + " if you already have one.").style(11, "&Ki") + "\r\nEnter new or existing username: ",
@@ -210,9 +211,6 @@ module.exports = {
 		.snd(m.PROTOCOL.WILL_GMCP)
 		.snd(m.PROTOCOL.GO_MXP);
 
-		info('portal client assumed', s);
-		s.portal = 1; /* for now, let's assume portal client to avoid timing issues */
-
 		after(2, function() {
 			if (!s.user) {
 				s.snd(m.LOGIN_SCREEN);
@@ -228,6 +226,7 @@ module.exports = {
 		debug('userPrompt', s);
 		
 		if (s.portal) {
+			
 			var o = {
 				title: my().USERNAME_PROMPT,
 		        placeholder: my().USERNAME_PLACEHOLDER,
@@ -246,7 +245,7 @@ module.exports = {
 		}
 		else {
 			!err || s.snd(err);
-			s.snd(my().USERNAME);
+			s.snd(my().PROTOCOL.WONT_ECHO).snd(my().USERNAME);
 		}
 		
 		s.next = user.userName;
@@ -533,7 +532,7 @@ module.exports = {
 				karma: 0 
 			}
 		})
-		.success(function(usr) {
+		.then(function(usr) {
 			
 			user.emit('create', s);
 			

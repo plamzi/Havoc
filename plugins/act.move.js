@@ -1,6 +1,7 @@
 var u = require('util');
 
 addStrings({
+	
 	eng: {
 	
 		INVALID_DIR:				"That's not a direction you can go in.",

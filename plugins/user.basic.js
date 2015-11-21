@@ -137,7 +137,7 @@ module.exports = {
 		extend(attr, a);
 
 		this.updateAttributes({ attr: attr }, ['attr'])
-		.success(function() {
+		.then(function() {
 			!cb || cb(this)
 		});
 		

@@ -110,7 +110,7 @@ var pm = function(cmd) {
 	
 	if (cmd == '/s') { //debug('act.social: pm send');
 
-		Message.create(ch.pm).success(function() {
+		Message.create(ch.pm).then(function() {
 			
 			ch.send(my().PM_SENT);
 			var usr = my().userindex[ch.pm.to_id];
@@ -145,14 +145,11 @@ module.exports = {
 		havoc.register('act.social', 'init', function() {
 			
 			Message = db.define('Messages', message_struct);
-			Message.sync();
-
+			//Message.sync();
 			var Social = db.define('Socials', social_struct, { timestamps: 0 });
 			
-			Social.sync()
-			.then(function() {
-				return Social.findAll();
-			})
+			//Social.sync()
+			Social.findAll()
 			.then(function(r) { 
 				
 				my().socials = {};
@@ -193,7 +190,7 @@ module.exports = {
 					for (var i in a)
 						if (a[i] != ch) {
 							a[i].emit('proc.' + type, ch, arg1, arg2);
-							//log('proc.'+type+' on ' + a[i].name);
+							//log('proc.' + type + ' on ' + a[i].name);
 						}
 				/* Let's log for posterity */
 				if (type == 'gossip') {
@@ -320,7 +317,8 @@ module.exports = {
 					)
 				),
 				limit: n 
-			}).success(function(r) {
+			})
+			.then(function(r) {
 			
 				if (!r)
 					return ch.send(u.format(my().NO_RECENT_X_TO_SHOW, 'tells'));

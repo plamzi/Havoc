@@ -34,7 +34,7 @@ var onExp = function(ch, gain) {
 		ch.setPoints({ maxmana: ch.points.maxmana + 10 });
 		ch.setPoints({ maxstamina: ch.points.maxstamina + 10 });
 		
-		ch.updateAttributes({ level: ch.level + 1 }, ['level']).success(function() {
+		ch.updateAttributes({ level: ch.level + 1 }, ['level']).then(function() {
 			ch.restore().send(u.format(my().GAIN_LEVEL_X_MSG, ch.level));
 		});
 	}
@@ -102,10 +102,8 @@ module.exports = {
 		havoc.register('char.class', 'init', function() {
 			
 			Class = db.define('Classes', class_struct, { timestamps: 0 });
-			Class.sync()
-			.then(function() {
-				return Class.findAll();
-			})
+			//Class.sync();
+			Class.findAll()
 			.then(function(r) {
 				/* we'll keep the resulting array in my() so we can reload the rest of the code */
 				my().classes = r;

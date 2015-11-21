@@ -115,8 +115,9 @@ module.exports = {
 
 		char.register('char.fight', 'enter.pc', function(ch) {
 
-			ch.sendGMCP('ch.points', ch.points);
-			ch.sendGMCP('ch.attacks', ch.attacks);
+			ch
+			.sendGMCP('ch.points', ch.points)
+			.sendGMCP('ch.attacks', ch.attacks);
 
 			ch.register('char.fight', 'post.stat', function(vict) {
 				if (ch == vict)
@@ -141,10 +142,8 @@ module.exports = {
 
 		var Attacks = db.define('Attacks', attack_struct, { timestamps: 0 });
 
-		Attacks.sync()
-		.then(function() {
-			return Attacks.findAll();
-		})
+		//Attacks.sync();
+		Attacks.findAll()
 		.then(function(r) {
 			/* we keep reference data in my() so we can reload the rest of the code */
 			my().attacks = r;

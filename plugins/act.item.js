@@ -183,7 +183,7 @@ module.exports = {
 
 			var _it = it;
 
-			it.destroy().success(function() {
+			it.destroy().then(function() {
 				ch.items.remove(_it);
 				ch.do('inv');
 			});
@@ -211,7 +211,7 @@ module.exports = {
 					if (!it.attr.price)
 						return ch.send(my().SELL_USAGE);
 
-				it.save().success(function(it) {
+				it.save().then(function(it) {
 					ch.do('inv');
 				});
 			}
@@ -233,7 +233,7 @@ module.exports = {
 
 			if (it) {
 				it.location = 'carried';
-				it.save().success(function(it) {
+				it.save().then(function(it) {
 					ch.do('inv');
 				});
 			}
@@ -250,7 +250,8 @@ module.exports = {
 				
 			Item.findAll({
 				where: [{ location: "shop", id: arg[0] }]
-			}).success(function(r) {
+			})
+			.then(function(r) {
 				
 				if (!r.length || r.length > 1)
 					return ch.send(my().NO_SUCH_ITEM_FOR_SALE);
@@ -267,7 +268,7 @@ module.exports = {
 				if (ch.PC())
 					r[0].CharId = ch.id;
 				
-				r[0].save().success(function() {
+				r[0].save().then(function() {
 					ch.send(u.format(my().YOU_BOUGHT_X, r[0].name));
 				});
 			});
@@ -286,7 +287,8 @@ module.exports = {
 					[ "name LIKE '%" + arg.join(' ') + "%'" ] 
 				],
 				group: ['CharId', 'MobId', 'ItemProtoId']
-			}).success(function(r) {
+			})
+			.then(function(r) {
 				
 				if (!r.length)
 					return ch.send(m.NO_SUCH_ITEM_FOR_SALE);
@@ -386,7 +388,7 @@ module.exports = {
 			
 			var _it = it;
 			
-			it.destroy().success(function() {
+			it.destroy().then(function() {
 				ch.items.remove(_it);
 				ch.send(u.format(my().YOU_JUNK_X, _it.name));
 			});

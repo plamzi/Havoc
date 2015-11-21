@@ -217,7 +217,7 @@ module.exports = {
 		
 		if (was != p[type]) {
 			//log('ch.gain was is' + was + ' -> ' + p[type]);
-			ch.updateAttributes({ points: p }, ['points']).success(function() {
+			ch.updateAttributes({ points: p }, ['points']).then(function() {
 				ch.emit('gain.' + type, gain);
 				ch.sendGMCP("ch.points", p);
 			});
@@ -507,7 +507,7 @@ module.exports = {
 		var attr = this.attr;
 		extend(attr, d);
 
-		this.updateAttributes({ attr: attr }, ['attr']).success(cb || function() {});
+		this.updateAttributes({ attr: attr }, ['attr']).then(cb || function() {});
 		return this;
 	},
 	
@@ -516,7 +516,7 @@ module.exports = {
 		var attr = this.attr;
 		delete attr[d];
 		
-		this.updateAttributes({ attr: attr }, ['attr']).success(cb || function() {});
+		this.updateAttributes({ attr: attr }, ['attr']).then(cb || function() {});
 		return this;
 	},
 	
@@ -525,7 +525,7 @@ module.exports = {
 		var p = this.points;
 		extend(p, d);
 
-		this.updateAttributes({ points: p }, ['points']).success(cb || function() {});
+		this.updateAttributes({ points: p }, ['points']).then(cb || function() {});
 		return this;
 	},
 	
@@ -534,7 +534,7 @@ module.exports = {
 		var p = this.points;
 		delete p[d];
 		
-		this.updateAttributes({ points: p }, ['points']).success(cb || function() {});
+		this.updateAttributes({ points: p }, ['points']).then(cb || function() {});
 		return this;
 	},
 	
@@ -543,7 +543,7 @@ module.exports = {
 		var attr = this.attr;
 		extend(attr.pref, d);
 		
-		this.updateAttributes({ attr: attr }, ['attr']).success(cb || function() {});
+		this.updateAttributes({ attr: attr }, ['attr']).then(cb || function() {});
 		return this;
 	},
 	
@@ -571,7 +571,7 @@ module.exports = {
         
 		extend(attr.aff, a);
 
-		ch.updateAttributes({ attr: attr }, ['attr']).success(function() {
+		ch.updateAttributes({ attr: attr }, ['attr']).then(function() {
 			ch.cmd.stat.apply(ch);
 		});
 

@@ -713,18 +713,18 @@ module.exports = {
 	commands: function(arg) {
 		
 		var ch = this;
-		
+
 		if (ch.s.portal)
 			ch.send('<DEST Modal>'.mxp() + my().AVAILABLE_COMMANDS);
 		
 		for (var i in act) {
 			
-			if (act[i] instanceof Function || i[0] == '_')
+			if (act[i] instanceof Function || typeof(act[i]) != 'object' || i[0] == '_')
 				continue;
 			
-			if (arg && i != arg[0])
-				continue;
-			
+			if (arg && i != arg[0]) /* filtering */
+				continue; 
+
 			var cmds = Object.keys(act[i]).sort();
 			
 			cmds = cmds

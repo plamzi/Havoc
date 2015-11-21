@@ -95,7 +95,7 @@ module.exports = {
 			MobId: ch.npc()?ch.id:null
 		};
 
-		it.updateAttributes(o).success(function() {
+		it.updateAttributes(o).then(function() {
 			ch.items.add(it); /* are we violating ORM restrictions by doing this? testing is needed */
 			!cb || cb(it);
 		});
@@ -111,12 +111,12 @@ module.exports = {
 			location: 'ground',
 			at: clone(ch.at)
 		})
-		.success(function() {
+		.then(function() {
 
 			item.toGround(it);
 			
-			ch.save(['at']).success(function() {
-				ch.reload().success(function() {
+			ch.save(['at']).then(function() {
+				ch.reload().then(function() {
 					!cb||cb(it);
 				});
 			});
@@ -135,7 +135,7 @@ module.exports = {
 				ch.unequip(ch.items[i]);
 		
 		it.location = 'worn';
-		it.save().success(function() { !cb||cb(it); });
+		it.save().then(function() { !cb||cb(it); });
 		
 		return this;
 	},
@@ -147,7 +147,7 @@ module.exports = {
 		if (!ch.canUnequip(it, my().VERBOSE))
 			return;
 		
-		it.updateAttributes( { location: 'carried' }).success(function() { !cb||cb(it); });
+		it.updateAttributes( { location: 'carried' }).then(function() { !cb||cb(it); });
 		
 		return this;
 	},
