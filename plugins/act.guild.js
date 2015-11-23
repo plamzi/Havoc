@@ -425,7 +425,7 @@ module.exports = {
 				  m.U_HUMAN.style(16, '&178') + ' ' + user.name.mxpselect(o, hint) + ' '
 				+ m.U_GROUP.style(16, '&B') + ' ' + r[i].name.mxpsend('pm ' + user.id, 'pm ' + r[i].name) + ' '
 				+ m.U_STAR.style('guild') + ' ' + ch.getGuildRank(user) + ' '
-				+ r[i].updatedAt.toUTCString().substring(0, 11).replace(',','').style(11, '&Ki') + ' '
+				+ r[i].updatedAt.toUTCString().substring(0, 11).replace(',','').style(11, '&I') + ' '
 				+ '\r\n';
 			}
 			

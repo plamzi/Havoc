@@ -316,7 +316,7 @@ module.exports = {
 						{ from_id: ch.id }, { to_id: ch.id }
 					)
 				),
-				limit: n 
+				limit: n
 			})
 			.then(function(r) {
 			
@@ -324,7 +324,7 @@ module.exports = {
 					return ch.send(u.format(my().NO_RECENT_X_TO_SHOW, 'tells'));
 
 				for (var i in r)
-					ch.send(r[i].createdAt.toUTCString().substring(0, 22).style(11, '&Ki') + ' ' 
+					ch.send(r[i].createdAt.toUTCString().substring(0, 22).style(11, '&I') + ' ' 
 					+ r[i].from.color('&Y') + ': ' + r[i].text);
 			});
 			

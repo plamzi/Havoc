@@ -93,7 +93,7 @@ module.exports = {
 			return (box + ' ' + a.name + ' ' 
 			+ icon + ' ' + (a.attr.damage||a.attr.armor) + ' ' 
 			+ my().U_SPEED + ' ' + (a.attr.speed / 1000) + ' ' 
-			+ a.type.join(',').color('&Ki')).mxpsend(a.name);
+			+ a.type.join(',').color('&I')).mxpsend(a.name);
 			
 		}).join('\r\n');
 		

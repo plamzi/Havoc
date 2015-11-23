@@ -233,7 +233,7 @@ module.exports = {
 		.snd(z.zone.color('&136') + ': ' + z.x + 'x'.color('&K') + z.y +' ' + props.font('size=11').color('&K'));
 		
 		if (ch.imp())
-			ch.snd(' ' + m.zone[z.zone].grid[z.y][z.x].color('&Ki'));
+			ch.snd(' ' + m.zone[z.zone].grid[z.y][z.x].color('&I'));
 
 		ch.send(''); /* line break */
 		ch.sendGMCP("ch.at", ch.at);
@@ -252,7 +252,7 @@ module.exports = {
 		var I = ch.getItemsAt().sort(by_name);
 		
 		for (i in I)
-			ch.send(I[i].name.color('&m') + ', ' + I[i].type.color('&Ki'));
+			ch.send(I[i].name.color('&m') + ', ' + I[i].type.color('&I'));
 
 		var M = ch.getMobsAt().sort(by_name), n = 0;
 
@@ -267,7 +267,7 @@ module.exports = {
 				M[i].name.mxpselect(interacts(M[i], ch)).color('&160')
 				+ (n > 1?(' x'+n):'') + ' ' 
 				+ m.SEX[M[i].sex].symbol.color('&K') + ' ' 
-				+ (M[i].class + ', ').color('&Ki') 
+				+ (M[i].class + ', ').color('&I') 
 				+ M[i].trade.style('info')
 			);
 
@@ -284,8 +284,8 @@ module.exports = {
 			ch.send(
 				P[i].name.mxpselect(interacts(P[i], ch)).color('&B') + ' ' 
 				+ m.SEX[P[i].sex].symbol + ' ' 
-				+ P[i].class.color('&Ki') + ', ' 
-				+ P[i].trade.font('size=11').color('&Ki')
+				+ P[i].class.color('&I') + ', ' 
+				+ P[i].trade.font('size=11').color('&I')
 			);
 		}
 
@@ -554,7 +554,7 @@ module.exports = {
 			
 			+ m.ITEM_TYPE_ICON[it.type].color('&K') + ' ' + it.type
 			
-			//+ (it.position?"position: ".color('&Ki') + it.position : "") + ' '
+			//+ (it.position?"position: ".color('&I') + it.position : "") + ' '
 			
 			+ (it.attr.use ? "\r\nuse: ".color('&K') + it.attr.use.name : " ")
 			
@@ -604,7 +604,7 @@ module.exports = {
 				+= m.U_HUMAN.style(16, '&178') + ' ' + usr.name.mxpselect(['pm ' + usr.id, 'whois ' + usr.id ], ['', 'pm ' + usr.name, 'whois ' + usr.name]) + ' '
 				+ m.U_GROUP.style(16, '&B') + ' ' + r[i].name.mxpselect(['pm ' + usr.id, 'stat ' + r[i].id], ['', 'pm ' + r[i].name, 'stat ' + r[i].name]) + ' '
 				+ m.U_STAR.style(16, '&208') + ' ' + r[i].level + ' '
-				+ r[i].updatedAt.toUTCString().substring(0, 11).replace(',','').style(11, '&Ki') + ' '
+				+ r[i].updatedAt.toUTCString().substring(0, 11).replace(',','').style(11, '&I') + ' '
 				+ '\r\n';
 			}
 	
@@ -622,15 +622,15 @@ module.exports = {
 			return ch.send(my().WHOIS_USAGE);
 			
 		var usr = m.userindex[arg[0]];
-		
+
 		if (!usr)
 			return;
 		
 		var whois = m.U_HUMAN.style(16, '&178') + ' ' + usr.name.mxpsend('pm ' + usr.id, 'pm ' + usr.name) + '\r\n\r\n'
 		+ m.U_SWORDS.style(15, '&R') + ' ' + (usr.points.frags || 0 ) + ' '
 		+ m.U_KARMA.style(15, '&212') + ' ' + (usr.points.karma || 0) + '\r\n'
-		+ ('Created: ' + usr.createdAt.toUTCString().substring(0, 16).replace(',' , '')).style(11, '&Ki') + '\r\n'
-		+ ('Last seen: ' + usr.updatedAt.toUTCString().substring(0, 16).replace(',' , '')).style(11, '&Ki') + '\r\n';
+		+ ('Created: ' + usr.createdAt.toUTCString().substring(0, 16).replace(',' , '')).style(11, '&I') + '\r\n'
+		+ ('Last seen: ' + usr.updatedAt.toUTCString().substring(0, 16).replace(',' , '')).style(11, '&I') + '\r\n';
 		
 		ch.send(whois, 'Modal');
 	},

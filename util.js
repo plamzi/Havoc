@@ -25,7 +25,7 @@ log = function(msg, s) {
 
 info = function(msg, s) {
 	//if (config && config.server.loglevel == 'high')
-	return log('info: '.color('&B') + msg, s); 
+	return log('info: '.color('&L') + msg, s); 
 };
 
 debug = function(msg, s) {
@@ -44,14 +44,17 @@ warning = function(msg, s) {
 
 /* this enables us to serve localized strings if it's run 
  * in the context of user or char with lang preferences */
+
 my = function() {
-	return this.lang ? global['strings.'+this.lang] : global['strings.'+config.server.language];
+	return this.lang ? global['strings.' + this.lang] : global['strings.'+config.server.language];
 };
 
 ansi = function(str, color) {
 
 	if (/(&[a-zA-Z])/.test(str)) {
+		
 		for (var c in my().ANSI) {
+			
 			var re = new RegExp(c, 'g');
 			str = color ? str.replace(re, my().ANSI[c]) : str.replace(re, '');
 		}
@@ -160,17 +163,23 @@ point = function(to, from, allowed, forbidden) {
 };
 
 /*  this lets us define a prototype extension without 
-	overwriting potentially existing ones */
+	overwriting potentially existing ones, and allowing
+	other modules to rewrite them if they have collisions */
 	
 var define = function(O, k, v) {
 	if (!O.prototype[k])
 		Object.defineProperty(O.prototype, k, {
 			enumerable: false,
+			writable: true,
 			value: v	
-		}); 
+		});
 };
 
 /* begin prototype extensions */
+
+define(Object, 'clone', function(o) {
+	return JSON.parse(stringify(this));
+});
 
 define(Array, 'has', function(o) {
 	return (this.indexOf(o) != -1);
@@ -180,7 +189,7 @@ define(Array, "add", function(a) {
 	if (!this.has(a))
 		this.push(a);
 	else 
-		warning('util.add detected duplicate!');
+		info('util.add detected and prevented duplicate add to array');
 	return this;
 });
 
@@ -342,7 +351,7 @@ String.prototype.style = function(a, b) {
 		return this.font("size="+a).color(b);
 
 	if (a == 'info') 
-		return this.font("size=13").color("&Ki");
+		return this.font("size=13").color("&I");
 
 	if (a == 'move') 
 		return this.font("size=13").color("&246");

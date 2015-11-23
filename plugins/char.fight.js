@@ -283,7 +283,7 @@ module.exports = {
 		ch.fighting = vict;
 		
 		if (ch.pc())
-			ch.send(u.format(m.YOU_START_FIGHTING, vict.name) + ' &Ki' + att.name + ', ' + skl.name + ', ' + (exists(def)?def.name:'no defense') + '&n');
+			ch.send(u.format(m.YOU_START_FIGHTING, vict.name) + ' &I' + att.name + ', ' + skl.name + ', ' + (exists(def)?def.name:'no defense') + '&n');
 		
 		vict.send(u.format(m.A_STARTS_FIGHTING_YOU, ch.name));
 		ch.sendAt(u.format(m.A_STARTS_FIGHTING_B, ch.name, vict.name), /* exclude */[ch, vict]);
@@ -414,7 +414,7 @@ module.exports = {
 			var absorb = MIN(dam / 2, def.attr.armor);
 			
 			dam -= absorb;
-			ch.send('&Y'+my().U_SHIELD+'&n '+absorb+' '+def.name.color('&Ki'));			
+			ch.send('&Y'+my().U_SHIELD+'&n '+absorb+' '+def.name.color('&I'));			
 
 			def.attr.ready = 0;
 			setTimeout(function() { def.attr.ready = 1; }, def.attr.speed);

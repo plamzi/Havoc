@@ -21,7 +21,7 @@ addStrings({
 	
 	eng: {
 		
-		USERNAME:			("Press " + "reset".mxpsend() + " to request a password reset email.\r\nPress " + "token".mxpsend() + " if you already have one.").style(11, "&Ki") + "\r\nEnter new or existing username: ",
+		USERNAME:			("Press " + "reset".mxpsend() + " to request a password reset email.\r\nPress " + "token".mxpsend() + " if you already have one.").style(11, "&I") + "\r\nEnter new or existing username: ",
 		USERPROMPT_INFO:	"To create a &dnew account&n, enter a desired username and leave the password field &dblank&n.".colorize(),
 		USERNAME_PROMPT:	"Enter new or existing username: ",
 		PASSWORD:			"Password: ",
@@ -422,7 +422,7 @@ module.exports = {
 				closeText: 'Opt Out'
 			});
 		else
-			s.snd(my().EXPLAIN_EMAIL.style(11, "&Ki") + '\r\n' + my().OPT_OUT_EMAIL + '\r\n' + my().PROMPT_EMAIL);
+			s.snd(my().EXPLAIN_EMAIL.style(11, "&I") + '\r\n' + my().OPT_OUT_EMAIL + '\r\n' + my().PROMPT_EMAIL);
 	},
 
 	email: function(s, d) {
@@ -430,7 +430,7 @@ module.exports = {
 		if (d)
 			s.email = d;
 		else
-			s.send(my().OPTED_OUT_OF_EMAIL.style(11, "&Ki"));
+			s.send(my().OPTED_OUT_OF_EMAIL.style(11, "&I"));
 		
 		if (s.portal)
 			s.sendGMCP('ModalInput', {

@@ -65,7 +65,7 @@ var onStat = function(ch, vict) {
 	//dump(exp);
 	ch.snd(
 		m.U_STAR.color('&208') + ' ' + vict.level + ' ' 
-		+ bar.join('').color('&130') + ' ' + (tnl + '%').style(11, '&Ki')
+		+ bar.join('').color('&130') + ' ' + (tnl + '%').style(11, '&I')
 	);
 };
 

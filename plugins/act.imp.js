@@ -42,7 +42,7 @@ var onDo = function(ch) {
 var onStat = function(ch, vict) {
 	return;
 	after(0.1, function() {
-		ch.send(stringify(vict.values).style(10, '&Ki'));
+		ch.send(stringify(vict.get({ plain: true })).style(10, '&I'));
 	});
 };
 
@@ -163,10 +163,10 @@ module.exports = {
 	
 	create: function(arg) {
 	
-		var ch = this, id, m = my();
+		var ch = this, id;
 	
 		if (!arg)
-			return ch.send(m.CREATE_USAGE);
+			return ch.send(my().CREATE_USAGE);
 
 		if (arg[0].isnum())
 			id = arg[0];
@@ -174,20 +174,20 @@ module.exports = {
 			id = char.protoIdByName(arg.join(' '));
 	
 		if (!m.mobproto[id])
-			return ch.send(m.NO_SUCH_MOB_PROTO);
+			return ch.send(my().NO_SUCH_MOB_PROTO);
 
-		var o = clone(m.mobproto[id].values);
+		var o = my().mobproto[id].get({ plain: true }).clone();
 		o.MobProtoId = o.id, delete o.id;
 	
 		log(stringify(o));
 	
 		char.createMob(o, function(vict) {
-			vict.at = clone(ch.at);
+			vict.at = ch.at.clone();
 			char.initMob(vict);
 			vict.emit('appear');
 		});
 	},
-	
+
 	destroy: function(arg) {
 
 		if (!arg)
@@ -233,7 +233,7 @@ module.exports = {
 			return ch.send(my().NOONE_BY_THAT_NAME);
 	
 		vict.on('snoop', function(d) {
-			ch.send((vict.name + ': ' + d).color('&Ki'));
+			ch.send((vict.name + ': ' + d).color('&I'));
 		})
 	
 		ch.send(u.format(my().SNOOP_X, vict.name));
@@ -281,6 +281,7 @@ module.exports = {
 		arg = (arg.length > 1)?arg.join(' '):arg[0];
 
 		item.create(arg, function (it) { 
+			
 			ch.take(it).send(u.format(my().YOU_NOW_HAVE_X, it.name));
 		});
 	

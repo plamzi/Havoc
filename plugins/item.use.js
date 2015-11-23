@@ -5,6 +5,7 @@
 var u = require('util');
 
 addStrings({
+	
 	eng: {
 		X_MAKES_YOU_FEEL_BETTER:		"%s makes you feel better."
 	}

@@ -299,7 +299,7 @@ module.exports = {
 					ch.send(
 						r[i].name.mxpselect([ 'id ' + r[i].id, 'buy ' + r[i].id ]) + ' ' 
 						+ my().U_COINS.color('&221') + ' ' + r[i].attr.price.comma() + ' '
-						+ (r[i].CharId?m.charindex[r[i].CharId].name:m.mobindex[r[i].MobId].name).color('&Ki')
+						+ (r[i].CharId?m.charindex[r[i].CharId].name:m.mobindex[r[i].MobId].name).color('&I')
 					);
 			});
 		},

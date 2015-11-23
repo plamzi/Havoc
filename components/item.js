@@ -118,24 +118,25 @@ module.exports = {
 
 		ItemProto.hasMany(Item);
 		Item.belongsTo(ItemProto);
-		
+
 		ItemProto.belongsToMany(Proc, { as: 'procs', through: ProcLink });
 		Proc.belongsToMany(ItemProto, { through: ProcLink });
 
 		Char.hasMany(Item, { as: 'items' });
 		Item.belongsTo(Char);
 		
-		Item.belongsTo(User); /* shared storage */
+		Item.belongsTo(User); /* shared storage across chars */
 
 		Mob.hasMany(Item, { as: 'items' });
 		Item.belongsTo(Mob);
 		
-		/* support for hardcoded mob drops */
+		/* future support for hardcoded mob drops */
 		/*
 		 * MobProto.hasMany(ItemProto, { as: 'items' });
 		 * ItemProto.belongsTo(MobProto); 
 		 */
-		//db.debug(1);
+		
+		db.debug(0);
 
 		db.conn().sync().then(function() {
 
@@ -180,6 +181,10 @@ module.exports = {
 
 				db.debug(0);
 			});
+		})
+		.catch(function(err) {
+			
+			error("item.init: " + err);
 		});
 	},
 	
@@ -278,13 +283,13 @@ module.exports = {
 		if (typeof o == 'number' || o.isnum())
 			o = my().itemproto[o];
 
-		o = o ? clone(o.values) : null;
+		o = o ? o.get({ plain: true }).clone() : null;
 		
 		if (!o)
 			return error('item.createItem could not locate proto for: ' + stringify(o));	
 
 		o.ItemProtoId = o.id, delete o.id, delete o.createdAt, delete o.updatedAt;
-		
+
 		Item.create(o).then(function (it) { 
 			item.initItem(it);
 			!cb || cb(it); 

@@ -51,8 +51,7 @@ var quest_struct = {
 		},
 		set: function(v) {
 			this.setDataValue('at', stringify(v));
-		},
-		defaultValue: {}
+		}
 	},
 
 	attr: {
@@ -62,8 +61,7 @@ var quest_struct = {
 		},
 		set: function(v) {
 			this.setDataValue('attr', stringify(v));
-		},
-		defaultValue: {}
+		}
 	},
 	
 	MobProtoId: Seq.INTEGER,
@@ -293,7 +291,7 @@ module.exports = {
 				for (var i in q)
 					vict
 					.snd((my().U_CHAT + ' ' + q[i].name).mxpsend('talk ' + ch.name + ' ' + q[i].id) + ' ')
-					.send(q[i].desc.color('&Ki'));
+					.send(q[i].desc.color('&I'));
 			});
 
 		Quest
@@ -397,7 +395,7 @@ module.exports = {
 				//ch.snd('<FRAME Name="scroll-view">'.mxp());
 				ch
 				.send((my().U_BOOK + ' ' + q.name).mxpsend('read ' + it.id + ' ' + q.id) + ' ')
-				.send(q.desc.color('&Ki'));
+				.send(q.desc.color('&I'));
 			};
 			return;
 		}
@@ -450,17 +448,19 @@ module.exports = {
 		};
 		
 		Quest.find(by).then(function(q) {
-			ch.addQuest(q, o).then(function(q) {
-				
-				debug('quest.addChar: ' + ch.name + " +quest " + q.name);
-				
-				ch
-				.getQuests()
-				.then(function(qs) {
-					ch.quests = qs;
-					!cb || cb(q);
+
+			
+				ch.addQuest(q, o).then(function() {
+					
+					debug('quest.addChar: ' + ch.name + " +quest " + q.name);
+					
+					ch
+					.getQuests()
+					.then(function(qs) {
+						ch.quests = qs;
+						!cb || cb(q);
+					});
 				});
-			});
 		});
 		
 		return this;
@@ -498,6 +498,7 @@ module.exports = {
 	giveItem: function(ch, name, q) {
 
 		if (ch.hasItem(name)) {
+			
 			warning('quest.giveItem: char already has: ' + ch.name + ' | ' + name);
 			return ch.send(u.format(my().YOU_ALREADY_HAVE_X, name));
 		}
@@ -555,7 +556,7 @@ module.exports = {
 		if (!mob)
 			return warning('quest.createMob could not find proto for mob named ' + name);
 		
-		var o = mob.values;
+		var o = mob.get({ plain: true });
 		o.MobProtoId = o.id, delete o.id;
 		o.at = at;
 		
@@ -577,7 +578,7 @@ module.exports = {
 
 	quiz: function(ch, quiz, q) {
 	    
-		//debug('quest.quiz');
+		debug('quest.quiz');
 		
 	    var nr, ch_q = ch.hasQuest(q.id);
 	    
@@ -602,14 +603,16 @@ module.exports = {
 	    }
 		
 	    if (!ch_q) {
+	    	
 	        quest.addChar(ch, q.id, { attr: { step: 1 }, desc: my().QUEST_QUIZ_STARTED }, function() {
 				quest.quiz(ch, quiz, q);
 	        });
+	        
 	        return my().HANDLED;
 	    }
 	    
-		/* char should now have this quest for sure */
-		dump('quest.quiz: '+ ch_q.values);
+		/* if we got here, ch should have this quest for sure */
+		dump('quest.quiz: '+ ch_q.get({ plain: true }));
 		
 		var step = ch_q.attr.step - 1;
 		//dump(step);

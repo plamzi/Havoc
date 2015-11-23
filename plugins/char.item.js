@@ -3,7 +3,16 @@ var u = require('util');
 addStrings({
 	
 	eng: {
-		X_IS_NOT_EQUIPPED: "You're not wearing %s."
+		
+		X_IS_NOT_EQUIPPED: "You're not wearing %s.",
+
+		KIT: [
+			 'a plain shield', 
+			 'a simple dagger', 
+			 'a leather jerkin',
+			 'a leather jerkin',
+			 'a simple red potion'
+		]
 	}
 });
 
@@ -162,23 +171,22 @@ module.exports = {
 		if (ch.pref('kit'))
 			return log('has starter kit', ch.s);
 		
-		var _equip = function(it) { 
-			ch.take(it, function() { 
+		var _equip = function(it) {
+			
+			ch.take(it, function() {
+				
 				if (ch.canEquip(it, my().SILENT))
-					ch.equip(it); 
+					ch.equip(it);
 			});
 		};
 		
-		item.create('a plain shield', _equip);
-		item.create('a simple dagger', _equip);
-		item.create('a leather jerkin', _equip);
-		item.create('a simple red potion', _equip);
-		item.create("The Adventurer's Guide to Calandor", _equip);
-				
-		/* set starting gold */
-		if (!ch.getGold())
-			ch.setGold(50);
-
+		my().KIT.forEach(function(i) {
+			item.create(i, _equip);	
+		});
+		
+		/* starting gold */
+		ch.setGold(50);
+		
 		ch.setPref({ kit: 1 });
 	},
 		

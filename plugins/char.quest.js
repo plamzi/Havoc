@@ -7,6 +7,7 @@ var u = require('util');
 addStrings({
 	
 	eng: {
+		
 	}
 });
 
@@ -34,7 +35,7 @@ module.exports = {
 
 	hasQuest: function(name, status) { /* check if a character has a quest, or if the quest status matches a certain string (e. g. completed) */
 
-		if (this.npc())
+		if (!this.quests)
 			return false;
 			
 		if (typeof name == "number") /* can also check by numeric id */
@@ -43,7 +44,7 @@ module.exports = {
         var res = null;
         
 		this.quests.some(function(q) { 
-			
+
 			if (status && q.name == name && q.CharQuest.status == status) {
 			    res = q.CharQuest;
 			    return true;

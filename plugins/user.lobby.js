@@ -128,9 +128,9 @@ module.exports = {
 			s.send(err);
 		
 		msg = m.U_GEAR.style(16, '&178').mxpsend('pref', 'Manage your user account preferences.') + '   ' 
-			+ s.user.displayName().mxpsend('password', 'Click to set or change your account password.').style(16, '&Ki') + '   ' 
-			+ (m.U_INBOX.style(16, '&178') + ' inbox').mxpsend('inbox', 'Check your message inbox.').style(16, '&Ki') + '   ' 
-			+ (m.U_ENVELOPE.style(16, '&178') + ' ' + (s.user.email.length ? s.user.email : 'no email')).mxpsend('email', 'Set up or change your email address.').style(16, '&Ki') + '\r\n';
+			+ s.user.displayName().mxpsend('password', 'Click to set or change your account password.').style(16, '&I') + '   ' 
+			+ (m.U_INBOX.style(16, '&178') + ' inbox').mxpsend('inbox', 'Check your message inbox.').style(16, '&I') + '   ' 
+			+ (m.U_ENVELOPE.style(16, '&178') + ' ' + (s.user.email.length ? s.user.email : 'no email')).mxpsend('email', 'Set up or change your email address.').style(16, '&I') + '\r\n';
 	
 		for (var i in s.user.chars) {
 			var a = s.user.chars[i];
@@ -138,7 +138,7 @@ module.exports = {
 				+ a.name.mxpsend(a.name) + ' ' 
 				+ m.U_STAR.color('&208') + ' ' 
 				+ a.level + ' ' + m.SEX[a.sex].symbol + ' ' 
-				+ (a.class + ', ' + a.trade).color('&Ki') + '\r\n';
+				+ (a.class + ', ' + a.trade).color('&I') + '\r\n';
 			msg += c;
 		}
 
@@ -367,7 +367,7 @@ module.exports = {
 				msg += 'x'.mxpsend('delete ' + i.id) + '  ' 
 					+ m.U_PENCIL.mxpsend('pm ' + i.from_id) + '  ' 
 					+ i.from + ': ' + i.text.nolf().ellipse(30).mxpsend('read ' + i.id, i.text) + ' ' 
-					+ i.createdAt.toUTCString().substring(0, 11).replace(',','').style(11, '&Ki') + '\r\n';
+					+ i.createdAt.toUTCString().substring(0, 11).replace(',','').style(11, '&I') + '\r\n';
 			});
 			
 			msg += '\r\n' + m.RETURN_TO_LOBBY.mxpsend('');
