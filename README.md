@@ -1,26 +1,27 @@
 Havoc Web-Based Game Engine
 ===========================
-v0.3 :: Alpha :: Unstable
+v0.3 :: Alpha :: Mostly stable
 
-Havoc is an open source multiplayer RPG game engine in node.js especially suited for realtime social web-based multiplayer games with a lot of interactive rich text. It is geared towards small teams of enthusiasts who wish to create full-featured worlds under severe budget limitations and with minimal graphical assets. 
+Havoc is an open source multiplayer RPG server & game engine written in node.js, especially suited for realtime social web-based multiplayer games with a lot of interactive rich text. 
 
-The bundled components aim to handle all common user actions and interactions, with an emphasis on competitive player factions. Havoc does not include a physics or particle engine--it comes bundled with a hexagonal world map in which any number of entities can occupy the same hex (maps are linked via portals). 
+This project is geared towards small teams of enthusiasts who wish to create rich and immersive online worlds while toiling under severe budget limitations and with minimal graphical assets. 
+
+The bundled components aim to handle all common user actions and interactions, with an emphasis on quests, smart NPCs, and competitive player factions becoming stronger via guilds & gear collection. 
+
+Havoc does not include a physics or particle engine--instead, it comes bundled with a hexagonal world map in which any number of entities can occupy the same hex. Maps are linked via entrances / portals. 
 
 
 <b>Screenshots:</b>
 
-http://www.cloudgamer.org/images/Havoc1.png
-
-http://www.cloudgamer.org/images/Havoc2.png
-
-http://www.cloudgamer.org/images/Havoc3.png
+http://www.mudportal.com/images/Havoc1.png
+http://www.mudportal.com/images/Havoc2.png
+http://www.mudportal.com/images/Havoc3.png
 
 
 <b>Live Demos:</b>
 
-http://www.aaralon.com/text
-
-(mostly text, very close to what you will get out of the box)
+http://www.aaralon.com/ (graphical GUI example with pre-rendered 2D artwork)
+http://www.aaralon.com/text (renders the UI mostly in text, very close to what you will get out of the box)
 
 
 http://www.aaralon.com
@@ -134,7 +135,7 @@ git clone https://github.com/plamzi/MUDPortal-Web-App
 
 Once you install Havoc, and have it up and running, verify that your websocket port is open to the outside. Then you should be able to access and play your game server at the following URL:
 
-http://www.cloudgamer.org/play?host=your-host-name&port=your-websocket-port&havoc=1
+http://www.mudportal.com/play?host=your-host-name&port=your-websocket-port&havoc=1
 
 The port parameter is optional if your websocket server is listening on the default port of 6001.
 
@@ -145,7 +146,7 @@ http://your-host-name/world/map-name.jpg
 
 To disable the graphical map, add &map=0 to the URL parameters:
 
-http://www.cloudgamer.org/play?host=your-host-name&port=your-websocket-port&havoc=1&map=0
+http://www.mudportal.com/play?host=your-host-name&port=your-websocket-port&havoc=1&map=0
 
 
 <h2>License Notes:</h2>
@@ -172,4 +173,4 @@ www/
 
 All GitHub pull requests will be considered. In the early days, priority will be given to any stability-related changes. 
 
-In addition, you can engage the author via the Havoc forum at http://www.cloudgamer.org/forums. This is also the place where you can discuss any topics that are outside the scope of the GitHub Issues page.
+In addition, you can engage the author via the Havoc forum at http://www.mudportal.com/forums ; This is also the place where you can discuss any topics that are outside the scope of the GitHub Issues page.
