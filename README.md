@@ -122,11 +122,13 @@ http://www.wesnoth.org/
 
 <h2>Client Notes:</h2>
 
-Although Havoc can be easily adapted to drive any client, it is specifically designed to work out of the box with the web app at http://www.cloudgamer.org/. 
+Although Havoc can be easily adapted to drive any client, it was designed to work out of the box with the web app at http://www.mudportal.com/play 
 
-The cloud app allows for deep customizations (and collaborations) via online tools after free site registration. Customizing the cloud app gives you the advantage of receiving automatic improvements without the need to host and maintain your own client.
+The portal & app allow for deep customizations (and collaborations) via online tools after free site registration. 
 
-That said, if you'd like to run your own web client, you can start by grabbing the web app source code. which is available here: 
+Customizing the cloud app gives you the advantage of receiving automatic improvements without the need to host and maintain your own client.
+
+That said, if you'd like to run your own web client, you can get a major head start by grabbing the web app source code, which is available here: 
 ```
 git clone https://github.com/plamzi/MUDPortal-Web-App
 ```
@@ -135,7 +137,7 @@ Once you install Havoc, and have it up and running, verify that your websocket p
 
 http://www.mudportal.com/play?host=your-host-name&port=your-websocket-port&havoc=1
 
-The port parameter is optional if your websocket server is listening on the default port of 6001.
+The port parameter is optional if your Havoc websocket server is listening on the default port of 6001.
 
 
 By default, the cloud-based web app will load the graphical overhead map and will look for your world map images at:
