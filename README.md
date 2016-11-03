@@ -14,22 +14,20 @@ Havoc does not include a physics or particle engine--instead, it comes bundled w
 <b>Screenshots:</b>
 
 http://www.mudportal.com/images/Havoc1.png
+
 http://www.mudportal.com/images/Havoc2.png
+
 http://www.mudportal.com/images/Havoc3.png
 
 
 <b>Live Demos:</b>
 
 http://www.aaralon.com/ (graphical GUI example with pre-rendered 2D artwork)
+
 http://www.aaralon.com/text (renders the UI mostly in text, very close to what you will get out of the box)
 
 
-http://www.aaralon.com
-
-(graphics, work in progress so not fully playable yet)
-
-
-<b>Features include:</b>
+<b>Features:</b>
 
 * Modular design that can be extended with components and plugins.
 
